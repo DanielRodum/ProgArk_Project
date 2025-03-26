@@ -3,7 +3,6 @@ package com.mygdx.game.android;
 import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.mygdx.game.DoodleWars;
 import com.google.firebase.FirebaseApp;
 import com.mygdx.game.doodleMain;
 

@@ -1,14 +1,14 @@
 package com.mygdx.game.controller;
 
-import com.mygdx.game.DoodleWars;
+import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.CreateLobbyView;
 import com.mygdx.game.view.MainMenuView;
 
 public class MainMenuController {
-    private DoodleWars game;
+    private doodleMain game;
     private MainMenuView view;
 
-    public MainMenuController(DoodleWars game, MainMenuView view) {
+    public MainMenuController(doodleMain game, MainMenuView view) {
         this.game = game;
         this.view = view;
     }

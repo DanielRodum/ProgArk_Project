@@ -1,22 +1,22 @@
 package com.mygdx.game.controller;
 
-import com.mygdx.game.DoodleWars;
+import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.CreateLobbyView;
 
 import java.util.Random;
 
 public class CreateLobbyController {
-    private DoodleWars game;
+    private doodleMain game;
     private CreateLobbyView view;
 
-    public CreateLobbyController(DoodleWars game, CreateLobbyView view) {
+    public CreateLobbyController(doodleMain game, CreateLobbyView view) {
         this.game = game;
         this.view = view;
     }
 
     /**
      * Generate a random lobby code
-     * 
+     *
      * @return A random alphanumeric code
      */
     public static String generateLobbyCode() {
@@ -33,7 +33,7 @@ public class CreateLobbyController {
 
     /**
      * Handle player joining the lobby
-     * 
+     *
      * @param playerName Name of the player joining
      */
     public void handlePlayerJoin(String playerName) {
@@ -43,7 +43,7 @@ public class CreateLobbyController {
 
     /**
      * Handle player leaving the lobby
-     * 
+     *
      * @param playerName Name of the player leaving
      */
     public void handlePlayerLeave(String playerName) {

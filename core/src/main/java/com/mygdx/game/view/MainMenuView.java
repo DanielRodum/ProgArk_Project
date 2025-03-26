@@ -5,25 +5,24 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mygdx.game.DoodleWars;
 import com.mygdx.game.controller.MainMenuController;
+import com.mygdx.game.doodleMain;
 
 public class MainMenuView implements Screen {
-    private DoodleWars game;
+    private doodleMain game;
     private Stage stage;
     private SpriteBatch batch;
     private BitmapFont font;
     private Skin skin;
     private MainMenuController controller;
 
-    public MainMenuView(DoodleWars game){
+    public MainMenuView(doodleMain game){
         this.game = game;
         this.controller = new MainMenuController(game, this);
         stage = new Stage();
@@ -67,11 +66,11 @@ public class MainMenuView implements Screen {
             }
         });
 
-        table.add(createLobbyBtn).width(600).height(150).pad(50);
+        table.add(createLobbyBtn).width(600).height(50).pad(50);
         table.row();
-        table.add(joinLobbyBtn).width(600).height(150).pad(50);
+        table.add(joinLobbyBtn).width(600).height(50).pad(50);
         table.row();
-        table.add(tutorialBtn).width(600).height(150).pad(50);
+        table.add(tutorialBtn).width(600).height(50).pad(50);
     }
 
     @Override

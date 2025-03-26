@@ -17,14 +17,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.mygdx.game.DoodleWars;
 import com.mygdx.game.controller.CreateLobbyController;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import com.mygdx.game.doodleMain;
+
 import java.util.Random;
 
 public class CreateLobbyView implements Screen {
-    private DoodleWars game;
+    private doodleMain game;
     private Stage stage;
     private Skin skin;
     private CreateLobbyController controller;
@@ -42,7 +43,7 @@ public class CreateLobbyView implements Screen {
     private int nextPlayerNumber = 2;
     private Random random = new Random();
 
-    public CreateLobbyView(DoodleWars game, String lobbyCode) {
+    public CreateLobbyView(doodleMain game, String lobbyCode) {
         this.game = game;
         this.lobbyCode = lobbyCode;
         this.players = new Array<>();
@@ -219,7 +220,7 @@ public class CreateLobbyView implements Screen {
 
     /**
      * Get the currently selected wordset
-     * 
+     *
      * @return The name of the selected wordset
      */
     public String getSelectedWordset() {
