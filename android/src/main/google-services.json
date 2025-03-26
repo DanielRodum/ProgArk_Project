@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "500505287395",
+    "project_id": "doodlewar-sketchybusiness",
+    "storage_bucket": "doodlewar-sketchybusiness.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500505287395:android:1c3b01952a1b3bf621c3d6",
+        "android_client_info": {
+          "package_name": "com.tdt4240.doodlewars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5XW34Mpix_dMwPZw2YNeO3j-yhV8z8Is"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
