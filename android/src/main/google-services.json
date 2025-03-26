@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "500505287395",
+    "firebase_url": "https://doodlewar-sketchybusiness-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "doodlewar-sketchybusiness",
     "storage_bucket": "doodlewar-sketchybusiness.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:500505287395:android:1c3b01952a1b3bf621c3d6",
+        "mobilesdk_app_id": "1:500505287395:android:e74ab7af6c7b504021c3d6",
         "android_client_info": {
-          "package_name": "com.tdt4240.doodlewars"
+          "package_name": "com.mygdx.game.android"
         }
       },
       "oauth_client": [],

@@ -2,20 +2,43 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import java.util.List;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class doodleMain extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
+    private FirebaseInterface firebaseService;
+    private List<String> wordBank;
+
+    public void setFirebaseService(FirebaseInterface service) {
+        this.firebaseService = service;
+        fetchWords();
+    }
+
+    private void fetchWords() {
+        if (firebaseService != null) {
+            firebaseService.fetchWords(new FirebaseInterface.FirestoreCallback() {
+                @Override
+                public void onSuccess(List<String> words) {
+                    wordBank = words;
+                    Gdx.app.log("Firebase", "Loaded words: " + words);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Gdx.app.error("Firebase", "Failed to load words", e);
+                }
+            });
+        }
+    }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        image = new Texture(Gdx.files.internal("libgdx.png")); // Your texture here
     }
 
     @Override
