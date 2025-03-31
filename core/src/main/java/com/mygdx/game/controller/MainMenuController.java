@@ -1,6 +1,7 @@
 package com.mygdx.game.controller;
 
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.view.ChooseWordView;
 import com.mygdx.game.view.CreateLobbyView;
 import com.mygdx.game.view.MainMenuView;
 
