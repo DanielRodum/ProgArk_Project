@@ -16,7 +16,7 @@ public class FirebaseManager implements FirebaseInterface {
 
     @Override
     public void fetchWords(FirestoreCallback callback) {
-        firestore.collection("wordBank")
+        firestore.collection("WordBank")
             .get()
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {

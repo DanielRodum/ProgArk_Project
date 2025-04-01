@@ -21,6 +21,11 @@ public class doodleMain extends Game {
         fetchWords();
     }
 
+    public FirebaseInterface getFirebaseService() {
+        return firebaseService;
+    }
+
+
     private void fetchWords() {
         if (firebaseService != null) {
             firebaseService.fetchWords(new FirebaseInterface.FirestoreCallback() {
