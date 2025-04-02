@@ -15,6 +15,17 @@ public class doodleMain extends Game {
     private Texture image;
     private FirebaseInterface firebaseService;
     private List<String> wordBank;
+    private AndroidBridge androidBridge;
+
+    public doodleMain(AndroidBridge androidBridge){
+        this.androidBridge = androidBridge;
+    }
+
+    public void openTutorial(){
+        if (androidBridge != null){
+            androidBridge.openTutorial();
+        }
+    }
 
     public void setFirebaseService(FirebaseInterface service) {
         this.firebaseService = service;
@@ -23,6 +34,10 @@ public class doodleMain extends Game {
 
     public FirebaseInterface getFirebaseService() {
         return firebaseService;
+    }
+
+    public interface AndroidBridge {
+        void openTutorial();
     }
 
 

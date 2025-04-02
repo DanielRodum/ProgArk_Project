@@ -12,7 +12,12 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new doodleMain(), getDefaultConfiguration());
+        return new Lwjgl3Application(new doodleMain(new doodleMain.AndroidBridge() {
+            @Override
+            public void openTutorial() {
+                //TODO:add something here
+            }
+        }), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

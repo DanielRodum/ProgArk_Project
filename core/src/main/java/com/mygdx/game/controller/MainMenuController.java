@@ -3,6 +3,7 @@ package com.mygdx.game.controller;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.CreateLobbyView;
 import com.mygdx.game.view.MainMenuView;
+import com.mygdx.game.view.TutorialView;
 
 public class MainMenuController {
     private doodleMain game;
@@ -26,6 +27,6 @@ public class MainMenuController {
 
     public void handleTutorial() {
         System.out.println("Tutorial Clicked!");
-        // TODO: implement logic
+        game.setScreen(new TutorialView(game));
     }
 }
