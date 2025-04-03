@@ -44,7 +44,7 @@ public class LeaderboardView implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        // Add test player scores
+        // Add test player scores (Replace with player class implementation)
         List<PlayerScore> testScores = new ArrayList<>();
         testScores.add(new PlayerScore("Alice", 1500));
         testScores.add(new PlayerScore("Bob", 1200));
@@ -52,7 +52,6 @@ public class LeaderboardView implements Screen {
         testScores.add(new PlayerScore("David", 1100));
         testScores.add(new PlayerScore("Eve", 1400));
 
-        // Initialize leaderboard with test data
         updateLeaderboard(testScores);
     }
 
@@ -65,7 +64,6 @@ public class LeaderboardView implements Screen {
         table.add(title).colspan(2).padBottom(40);
         table.row();
 
-        // Convert immutable list to a mutable list before sorting
         List<PlayerScore> mutableScores = new ArrayList<>(scores);
         mutableScores.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
 
@@ -95,7 +93,7 @@ public class LeaderboardView implements Screen {
         skin.dispose();
     }
 
-    // Other unused Screen methods
+    // Other unused Screen methods (Might be useful later)
     @Override public void resize(int width, int height) {}
     @Override public void show() {}
     @Override public void hide() {}
