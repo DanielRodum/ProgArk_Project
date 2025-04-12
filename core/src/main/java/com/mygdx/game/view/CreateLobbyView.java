@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -18,11 +19,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.controller.CreateLobbyController;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
 import com.mygdx.game.doodleMain;
-
-import java.util.Random;
 
 public class CreateLobbyView implements Screen {
     private doodleMain game;
@@ -39,46 +36,16 @@ public class CreateLobbyView implements Screen {
     private SelectBox<String> wordsetSelectBox;
     private String selectedWordset = "Default Wordset";
 
-    // Used to simulate players joining
-    private int nextPlayerNumber = 2;
-    private Random random = new Random();
 
     public CreateLobbyView(doodleMain game, String lobbyCode) {
         this.game = game;
         this.lobbyCode = lobbyCode;
         this.players = new Array<>();
-        this.controller = new CreateLobbyController(game, this);
+        this.controller = new CreateLobbyController(game, this, lobbyCode);
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-
         createUI();
-
-        // Adds host player to the top of the list before any other players
-        addPlayer("usernameOfHost (Host)");
-
-        // Simulates players joining
-        scheduleExamplePlayers();
-    }
-
-    /**
-     * Example of players joining after random delays
-     */
-    private void scheduleExamplePlayers() {
-        schedulePlayerJoin(2 + random.nextFloat() * 5);
-        schedulePlayerJoin(7 + random.nextFloat() * 5);
-        schedulePlayerJoin(12 + random.nextFloat() * 5);
-        schedulePlayerJoin(17 + random.nextFloat() * 5);
-    }
-
-    private void schedulePlayerJoin(float delaySeconds) {
-        final int playerNum = nextPlayerNumber++;
-        Timer.schedule(new Task() {
-            @Override
-            public void run() {
-                addPlayer("ExamplePlayer " + playerNum);
-            }
-        }, delaySeconds);
     }
 
     private void createUI() {
@@ -88,16 +55,19 @@ public class CreateLobbyView implements Screen {
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
 
+        // Lobby Code Display
         codeLabel = new Label("Code: " + lobbyCode, skin);
         codeLabel.setAlignment(Align.center);
         codeLabel.setFontScale(4.0f);
         codeLabel.setColor(Color.GREEN);
 
-        Label playersHeaderLabel = new Label("Waiting for Doodlers...", skin);
+        // Player List Header
+        Label playersHeaderLabel = new Label("Waiting for Players...", skin);
         playersHeaderLabel.setAlignment(Align.center);
         playersHeaderLabel.setFontScale(3.0f);
         playersHeaderLabel.setColor(Color.GREEN);
 
+        // Player List Container
         playerContainer = new Table();
         playerContainer.setBackground(skin.newDrawable("white"));
 
@@ -106,13 +76,12 @@ public class CreateLobbyView implements Screen {
 
         playerListScrollPane = new ScrollPane(playerListTable, skin);
         playerListScrollPane.setFadeScrollBars(false);
-
         playerContainer.add(playerListScrollPane).expand().fill().pad(15);
 
+        // Wordset Selection
         wordsetSelectBox = new SelectBox<>(skin);
         wordsetSelectBox.setItems("Default Wordset", "Funny words only", "Crazy words!!!");
         wordsetSelectBox.setSelected("Default Wordset");
-
         wordsetSelectBox.setColor(Color.WHITE);
         wordsetSelectBox.getStyle().listStyle.font.getData().setScale(3.0f);
         wordsetSelectBox.getStyle().font.getData().setScale(3.0f);
@@ -127,20 +96,18 @@ public class CreateLobbyView implements Screen {
 
         wordsetTable.add(wordsetLabel).padRight(20);
         wordsetTable.add(wordsetSelectBox).width(450).height(100);
-
         wordsetContainer.add(wordsetTable).pad(20);
 
-        SelectBox.SelectBoxStyle style = wordsetSelectBox.getStyle();
-        style.listStyle.selection = skin.newDrawable("white", new Color(0.2f, 0.7f, 0.2f, 1));
-
+        // Wordset selection listener
         wordsetSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 selectedWordset = wordsetSelectBox.getSelected();
-                System.out.println("Selected wordset: " + selectedWordset);
+                Gdx.app.log("Lobby", "Selected wordset: " + selectedWordset);
             }
         });
 
+        // Start Game Button
         startGameBtn = new TextButton("Start Game", skin);
         startGameBtn.getLabel().setFontScale(3.0f);
         startGameBtn.setColor(Color.GREEN);
@@ -151,6 +118,7 @@ public class CreateLobbyView implements Screen {
             }
         });
 
+        // Main Layout
         mainTable.add(codeLabel).pad(30).expandX().fillX();
         mainTable.row();
         mainTable.add(playersHeaderLabel).pad(15).expandX().fillX();
@@ -162,6 +130,53 @@ public class CreateLobbyView implements Screen {
         mainTable.add(startGameBtn).pad(10).width(500).height(150);
     }
 
+    public void setLobbyCode(String code) {
+        this.lobbyCode = code;
+        codeLabel.setText("Code: " + code);
+    }
+
+    public void showError(String message) {
+        Dialog errorDialog = new Dialog("Error", skin) {
+            {
+                text(message);
+                button("OK");
+                getContentTable().pad(20);
+                getButtonTable().padBottom(15);
+            }
+        };
+        errorDialog.show(stage);
+
+        // Make text larger
+        Label label = (Label)errorDialog.getContentTable().getChildren().peek();
+        label.setFontScale(2f);
+
+        // Style the button
+        TextButton button = (TextButton)errorDialog.getButtonTable().getChildren().peek();
+        button.getLabel().setFontScale(2f);
+    }
+
+    public void showStatus(String message) {
+        // Create a temporary status label that appears above the player list
+        Label statusLabel = new Label(message, skin);
+        statusLabel.setFontScale(2.5f);
+        statusLabel.setColor(Color.YELLOW);
+
+        // Clear any existing status messages
+        clearStatusMessages();
+
+        // Add to player list table at the top
+        playerListTable.add(statusLabel).expandX().fillX().padBottom(20).row();
+        playerListTable.invalidateHierarchy();
+    }
+
+    private void clearStatusMessages() {
+        // Remove any existing status labels (they'll be the first children if they exist)
+        while (playerListTable.getChildren().size > 0 &&
+            playerListTable.getChildren().first() instanceof Label) {
+            playerListTable.getChildren().removeIndex(0);
+        }
+    }
+
     public void addPlayer(String playerName) {
         if (!playerNameExists(playerName)) {
             players.add(playerName);
@@ -169,96 +184,69 @@ public class CreateLobbyView implements Screen {
         }
     }
 
-    private boolean playerNameExists(String playerName) {
+    public void removePlayer(String playerName) {
+        players.removeValue(playerName, false);
+        updatePlayerList();
+    }
+
+    public void clearPlayers() {
+        players.clear();
+        playerListTable.clear();
+    }
+
+    private void updatePlayerList() {
+        playerListTable.clear();
+
+        // Sort players with host first
+        Array<String> sortedPlayers = new Array<>(players);
+        sortedPlayers.sort((p1, p2) -> {
+            boolean p1IsHost = p1.contains("(Host)");
+            boolean p2IsHost = p2.contains("(Host)");
+            if (p1IsHost && !p2IsHost) return -1;
+            if (!p1IsHost && p2IsHost) return 1;
+            return p1.compareTo(p2);
+        });
+
+        // Display players with numbering
+        for (int i = 0; i < sortedPlayers.size; i++) {
+            String player = sortedPlayers.get(i);
+            Label playerLabel = new Label((i+1) + ". " + player, skin);
+            playerLabel.setFontScale(3.5f);
+            playerLabel.setColor(Color.BLACK);
+            playerLabel.setAlignment(Align.center);
+
+            if (player.contains("(Host)")) {
+                playerLabel.setColor(Color.GREEN);
+            }
+
+            playerListTable.add(playerLabel).expandX().fillX().padTop(20);
+            playerListTable.row();
+        }
+    }
+
+    public Array<String> getPlayers() {
+        return new Array<>(players); // Return a copy of the players array
+    }
+
+    public boolean playerNameExists(String name) {
         for (String player : players) {
-            if (player.equals(playerName)) {
+            if (player.equals(name) || player.startsWith(name + " (")) {
                 return true;
             }
         }
         return false;
     }
 
-    public void removePlayer(String playerName) {
-        players.removeValue(playerName, false);
-        updatePlayerList();
+    public void returnToMainMenu() {
+        game.setScreen(new MainMenuView(game));
     }
 
-    private void updatePlayerList() {
-        playerListTable.clear();
-        int hostIndex = -1;
-        for (int i = 0; i < players.size; i++) {
-            if (players.get(i).contains("(Host)")) {
-                hostIndex = i;
-                break;
-            }
-        }
 
-        if (hostIndex != -1) {
-            Label hostLabel = new Label("1. " + players.get(hostIndex), skin);
-            hostLabel.setFontScale(3.5f);
-            hostLabel.setColor(Color.BLACK);
-            hostLabel.setAlignment(Align.center);
-            playerListTable.add(hostLabel).expandX().fillX().padTop(20);
-            playerListTable.row();
-        }
-
-        int displayIndex = 2;
-        for (int i = 0; i < players.size; i++) {
-            if (i == hostIndex)
-                continue;
-
-            String player = players.get(i);
-            Label playerLabel = new Label(displayIndex + ". " + player, skin);
-            playerLabel.setFontScale(3.5f);
-            playerLabel.setColor(Color.BLACK);
-            playerLabel.setAlignment(Align.center);
-            playerListTable.add(playerLabel).expandX().fillX().padTop(20);
-            playerListTable.row();
-            displayIndex++;
-        }
-    }
-
-    /**
-     * Get the currently selected wordset
-     *
-     * @return The name of the selected wordset
-     */
-    public String getSelectedWordset() {
-        return selectedWordset;
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
-        stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-
-    @Override
-    public void show() {
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        stage.dispose();
-        skin.dispose();
-    }
+    @Override public void render(float delta) {}
+    @Override public void resize(int width, int height) {}
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() {}
 }
