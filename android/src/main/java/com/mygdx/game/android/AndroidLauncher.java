@@ -5,22 +5,22 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.firebase.FirebaseApp;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.FirebaseInterface;
 
-/** Launches the Android application. */
 public class AndroidLauncher extends AndroidApplication {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
-        configuration.useImmersiveMode = true; // Recommended, but not required.
 
         FirebaseApp.initializeApp(this);
-        FirebaseManager firebaseManager = new FirebaseManager();
+        FirebaseInterface firebase = new FirebaseManager();
 
-        doodleMain game = new doodleMain();
-        game.setFirebaseService(firebaseManager); // Connect Firebase
-
-        initialize(game, configuration);
+        // Initialize database structure
+        firebase.initializeDatabaseStructure(() -> {
+            doodleMain game = new doodleMain();
+            game.setFirebaseService(firebase);
+            initialize(game, configuration);
+        });
     }
 }
