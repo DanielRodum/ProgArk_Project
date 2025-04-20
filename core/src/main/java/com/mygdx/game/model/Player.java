@@ -1,29 +1,14 @@
+package com.mygdx.game.model;
+
 public class Player {
-    
     private String id;
     private String name;
-    private int totalGamesPlayed;
-    private int correctGuesses;
+    private int score;
 
     public Player(String id, String name) {
         this.id = id;
         this.name = name;
-        this.totalGamesPlayed = 0;
-        this.correctGuesses = 0;
-    }
-
-    public void updateStats(boolean isCorrect) {
-        totalGamesPlayed++;
-        if (isCorrect) {
-            correctGuesses++;
-        }
-    }
-
-    public double getAccuracy() {
-        if (totalGamesPlayed == 0) {
-            return 0.0; // Avoid division by zero
-        }
-        return (double) correctGuesses / totalGamesPlayed;
+        this.score = 0;
     }
 
     public String getId() {
@@ -34,11 +19,13 @@ public class Player {
         return name;
     }
 
-    public int getTotalGamesPlayed() {
-        return totalGamesPlayed;
+    public int getScore() {
+        return score;
     }
 
-    public int getCorrectGuesses() {
-        return correctGuesses;
+    public void updateStats(boolean guessedCorrectly) {
+        if (guessedCorrectly) {
+            score += 10; // You can customize the scoring later
+        }
     }
 }

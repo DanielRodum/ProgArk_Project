@@ -1,0 +1,14 @@
+The model-view-controller (MVC) pattern separates application functionality into
+three kinds of components:
+
+- A model, which contains the application’s data
+
+- A view, which displays some portion of the underlying data and interacts
+with the user
+
+- A controller, which mediates between the model and the view and manages
+the notifications of state changes
+
+
+Source:
+Bass, Clements & Kazman - Software Architecture in Practice (Third Edition), p. 213

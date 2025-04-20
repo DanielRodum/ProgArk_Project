@@ -1,5 +1,4 @@
-public class GameLogicController {
-    import java.util.Random;
+package com.mygdx.game.controller.gamecontrollers;
 
 public class GameLogicController {
     private GameStateModel gameState;
@@ -24,7 +23,7 @@ public class GameLogicController {
         boolean isCorrect = guess.equalsIgnoreCase(gameState.getCurrentWord());
         gameState.addGuess(player, guess, isCorrect);
         player.updateStats(isCorrect);
-        
+
         if (isCorrect) {
             System.out.println(player.getName() + " guessed correctly! Points awarded.");
         } else {
