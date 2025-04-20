@@ -1,4 +1,4 @@
-package com.mygdx.game.controller;
+package com.mygdx.game.controller.gamecontrollers;
 
 import com.mygdx.game.model.GameStateModel;
 import com.mygdx.game.model.Player;

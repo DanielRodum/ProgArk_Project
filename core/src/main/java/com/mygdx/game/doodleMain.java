@@ -43,6 +43,10 @@ public class doodleMain extends Game {
         }
     }
 
+    public List<String> getWordBank() {
+        return wordBank;
+    }
+
     @Override
     public void create(){
         setScreen(new MainMenuView(this));

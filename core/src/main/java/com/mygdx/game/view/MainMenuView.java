@@ -66,11 +66,18 @@ public class MainMenuView implements Screen {
             }
         });
 
-        table.add(createLobbyBtn).width(600).height(50).pad(50);
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        float buttonWidth = screenWidth * 0.8f;
+        float buttonHeight = screenHeight * 0.1f;
+        float padding = screenHeight * 0.05f;
+
+        table.add(createLobbyBtn).width(buttonWidth).height(buttonHeight).pad(padding);
         table.row();
-        table.add(joinLobbyBtn).width(600).height(50).pad(50);
+        table.add(joinLobbyBtn).width(buttonWidth).height(buttonHeight).pad(padding);
         table.row();
-        table.add(tutorialBtn).width(600).height(50).pad(50);
+        table.add(tutorialBtn).width(buttonWidth).height(buttonHeight).pad(padding);
     }
 
     @Override

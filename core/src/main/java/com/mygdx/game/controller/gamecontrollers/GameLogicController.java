@@ -1,12 +1,15 @@
 package com.mygdx.game.controller.gamecontrollers;
 
+import com.mygdx.game.model.GameStateModel;
+import com.mygdx.game.model.Player;
+
 public class GameLogicController {
     private GameStateModel gameState;
-    private WordDatabase wordDatabase;
+    private List<String> wordBank;
 
-    public GameLogicController(GameStateModel gameState, WordDatabase wordDatabase) {
+    public GameLogicController(GameStateModel gameState, List<String> wordBank) {
         this.gameState = gameState;
-        this.wordDatabase = wordDatabase;
+        this.wordBank = wordBank;
     }
 
     public void startGame() {
@@ -14,7 +17,7 @@ public class GameLogicController {
     }
 
     public void startNewRound() {
-        String randomWord = wordDatabase.getRandomWord();
+        String randomWord = wordBank.getRandomWord();
         gameState.startNewRound(randomWord);
         System.out.println("New round started! Drawer: " + gameState.getCurrentDrawer().getName());
     }
