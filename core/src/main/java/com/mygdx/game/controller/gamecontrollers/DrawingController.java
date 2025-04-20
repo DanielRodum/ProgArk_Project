@@ -1,7 +1,7 @@
 package com.mygdx.game.controller.gamecontrollers;
 
 import com.mygdx.game.model.GameStateModel;
-import com.mygdx.game.view.gameViews.DrawingView;
+import com.mygdx.game.view.gameviews.DrawingView;
 import com.mygdx.game.model.Player;
 
 public class DrawingController {
