@@ -3,6 +3,7 @@ package com.mygdx.game.controller;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.view.gameviews.ChooseWordView;
 import com.mygdx.game.view.WaitingView;
 import com.mygdx.game.view.MainMenuView;
 
@@ -34,7 +35,9 @@ public class WaitingController {
     }
 
     public void handleStartGame() {
-        if (isHost) firebase.startGame(lobbyCode, game.getPlayerName());
+        //if (isHost) firebase.startGame(lobbyCode, game.getPlayerName());
+        if (!isHost) return;
+        game.setScreen(new ChooseWordView(game, lobbyCode, true));
     }
 
     public void leaveLobby() {

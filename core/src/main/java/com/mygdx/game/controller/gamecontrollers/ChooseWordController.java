@@ -34,6 +34,21 @@ public class ChooseWordController {
     }
 
     public void selectWord(String word) {
+        firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback(){
+            @Override
+            public void onSuccess(String msg) {
+                firebase.startGame(lobbyCode, game.getPlayerName());
+                Gdx.app.postRunnable(()->{
+                    Gdx.app.log("ChooseWord", "Word saved & game started. Word: "+word);
+                });
+            }
+
+            @Override
+            public void onFailure(String err) {
+                Gdx.app.postRunnable(()->view.showError("Could not save word: "+err));
+            }
+        });
+
         firebase.startDrawingRound(lobbyCode, word, new FirebaseInterface.LobbyCallback() {
             @Override public void onSuccess(String msg) {
                 // stub: next screen is implemented by someone else

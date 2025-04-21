@@ -91,6 +91,17 @@ public class FirebaseManager implements FirebaseInterface {
     @Override public void fetchWords(FirestoreCallback cb) { cb.onSuccess(java.util.List.of("Cat","Dog")); }
     @Override public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
 
+    @Override
+    public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
+        DatabaseReference wordRef = database.getReference("lobbies/"+lobbyCode+"/word");
+        wordRef.setValue(word).addOnSuccessListener(unused -> callback.onSuccess("Word saved")).addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    @Override
+    public void getChosenWord(String lobbyCode, WordCallback callback) {
+
+    }
+
     private String generateLobbyCode() {
         String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         StringBuilder b = new StringBuilder();
