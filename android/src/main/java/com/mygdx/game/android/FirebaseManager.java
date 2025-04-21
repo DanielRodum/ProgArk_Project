@@ -138,4 +138,18 @@ public class FirebaseManager implements FirebaseInterface {
         }
         return code.toString();
     }
+
+    @Override
+    public void fetchWords(FirebaseInterface.FirestoreCallback callback) {
+        // TODO: replace with real Firestore fetch.
+        // For now, just return an empty list so the compiler is happy.
+        callback.onSuccess(new java.util.ArrayList<>());
+    }
+
+    @Override
+    public void startDrawingRound(String lobbyCode, String word, FirebaseInterface.LobbyCallback callback) {
+        // TODO: write the selected word into your DB under /lobbies/{lobbyCode}/currentWord
+        // For now, immediately succeed.
+        callback.onSuccess(lobbyCode);
+    }
 }
