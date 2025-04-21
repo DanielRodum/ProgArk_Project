@@ -27,6 +27,14 @@ public interface FirebaseInterface {
         void onFailure(Exception e);
     }
 
+    interface WordCallback {
+        void onSuccess(String word);
+        void onFailure(Exception e);
+    }
+
+    void saveChosenWord(String lobbyCode, String word, LobbyCallback callback);
+    void getChosenWord(String lobbyCode, WordCallback callback);
+
     // Lobby‐management methods
     void createLobby(String hostName, LobbyCallback callback);
     void joinLobby(String lobbyCode, String playerName, LobbyCallback callback);
