@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.services.PlatformService;
 import com.mygdx.game.view.MainMenuView;
 
+import java.util.List;
+
 public class doodleMain extends Game {
     private SpriteBatch batch;
     private String playerName;
@@ -24,15 +26,6 @@ public class doodleMain extends Game {
 
     public void returnToMainMenu(){
         setScreen(new MainMenuView(this));
-    }
-
-    public void setFirebaseService(FirebaseInterface service) {
-        this.firebaseService = service;
-        fetchWords();
-    }
-
-    public FirebaseInterface getFirebaseService() {
-        return firebaseService;
     }
 
     @Override public void create() {
