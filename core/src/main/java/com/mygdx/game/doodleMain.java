@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.game.services.PlatformService;
 import com.mygdx.game.view.MainMenuView;
 
 import java.util.List;
@@ -15,16 +16,19 @@ public class doodleMain extends Game {
     private Texture image;
     private FirebaseInterface firebaseService;
     private List<String> wordBank;
-    private AndroidBridge androidBridge;
-
-    public doodleMain(AndroidBridge androidBridge){
-        this.androidBridge = androidBridge;
+    private PlatformService platformService;
+    public doodleMain(PlatformService platformService){
+        this.platformService = platformService;
     }
 
     public void openTutorial(){
-        if (androidBridge != null){
-            androidBridge.openTutorial();
+        if (platformService != null){
+            platformService.openTutorialVideo();
         }
+    }
+
+    public void returnToMainMenu(){
+        setScreen(new MainMenuView(this));
     }
 
     public void setFirebaseService(FirebaseInterface service) {
@@ -34,10 +38,6 @@ public class doodleMain extends Game {
 
     public FirebaseInterface getFirebaseService() {
         return firebaseService;
-    }
-
-    public interface AndroidBridge {
-        void openTutorial();
     }
 
 
