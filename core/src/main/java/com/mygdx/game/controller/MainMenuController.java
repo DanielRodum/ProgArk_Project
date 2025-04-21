@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.MainMenuView;
+import com.mygdx.game.view.TutorialView;
 import com.mygdx.game.view.WaitingView;
 
 public class MainMenuController {
@@ -23,15 +24,13 @@ public class MainMenuController {
         view.showNameInputDialog(false);
     }
 
+    /** Switches to the libGDX TutorialView, which immediately calls openTutorial(). */
     public void handleTutorial() {
-        String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-        if (!Gdx.net.openURI(url)) {
-            view.showError("Could not launch tutorial");
-        }
+        game.setScreen(new TutorialView(game));
     }
 
     public void createLobbyWithName(String playerName) {
-        if (playerName.trim().isEmpty()) {
+        if (playerName == null || playerName.trim().isEmpty()) {
             view.showError("Please enter a valid name");
             return;
         }
@@ -51,11 +50,11 @@ public class MainMenuController {
     }
 
     public void joinLobbyWithName(String playerName, String lobbyCode) {
-        if (playerName.trim().isEmpty()) {
+        if (playerName == null || playerName.trim().isEmpty()) {
             view.showError("Please enter a valid name");
             return;
         }
-        if (lobbyCode.trim().isEmpty()) {
+        if (lobbyCode == null || lobbyCode.trim().isEmpty()) {
             view.showError("Please enter a valid lobby code");
             return;
         }
