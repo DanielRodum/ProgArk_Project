@@ -26,37 +26,15 @@ public class MainMenuView implements Screen {
         buildUI();
     }
 
-        float screenWidth  = Gdx.graphics.getWidth();
-        float screenHeight = Gdx.graphics.getHeight();
-
-        float btnWidth  = screenWidth  * 0.7f;
-        float btnHeight = screenHeight * 0.12f;
-        float fontScale = screenHeight / 720f;
-        float pad       = screenHeight * 0.05f;
-
     private void buildUI() {
         Table t = new Table();
         t.setFillParent(true);
         stage.addActor(t);
-        Table table = new Table();
-        table.setFillParent(true);
-        table.top().padTop(screenHeight * 0.1f);
-        stage.addActor(table);
 
         TextButton createBtn = new TextButton("Create Lobby", skin);
         createBtn.getLabel().setFontScale(2f);
         createBtn.addListener(new ClickListener() {
             @Override public void clicked(InputEvent e, float x, float y) {
-        TextButton createLobbyBtn = new TextButton("Create Lobby", skin);
-        TextButton joinLobbyBtn   = new TextButton("Join Lobby",   skin);
-        TextButton tutorialBtn    = new TextButton("Tutorial",     skin);
-
-        createLobbyBtn.getLabel().setFontScale(fontScale);
-        joinLobbyBtn  .getLabel().setFontScale(fontScale);
-        tutorialBtn   .getLabel().setFontScale(fontScale);
-
-        createLobbyBtn.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent event, float x, float y) {
                 controller.handleCreateLobby();
             }
         });
@@ -71,15 +49,6 @@ public class MainMenuView implements Screen {
 
         t.add(createBtn).width(300).height(60).pad(20).row();
         t.add(joinBtn).width(300).height(60).pad(20).row();
-        tutorialBtn.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent event, float x, float y) {
-                controller.handleTutorial();
-            }
-        });
-
-        table.add(createLobbyBtn).width(btnWidth).height(btnHeight).pad(pad).row();
-        table.add(joinLobbyBtn)  .width(btnWidth).height(btnHeight).pad(pad).row();
-        table.add(tutorialBtn)   .width(btnWidth).height(btnHeight).pad(pad);
     }
 
     @Override
