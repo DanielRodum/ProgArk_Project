@@ -7,9 +7,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.game.controller.MainMenuController;
 import com.mygdx.game.doodleMain;
@@ -78,6 +81,48 @@ public class MainMenuView implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
+    }
+
+    public void showNameInputDialog(boolean isHost) {
+        TextField nameField = new TextField("", skin);
+        TextField codeField = isHost ? null : new TextField("", skin);
+
+        Dialog dialog = new Dialog(isHost ? "Create Lobby" : "Join Lobby", skin) {
+            protected void result(Object object) {
+                if (object.equals(true)) {
+                    if (isHost) {
+                        controller.createLobbyWithName(nameField.getText());
+                    } else {
+                        controller.joinLobbyWithName(nameField.getText(), codeField.getText());
+                    }
+                }
+            }
+        };
+
+        dialog.getContentTable().add(new Label("Enter your name:", skin)).pad(10);
+        dialog.getContentTable().add(nameField).width(300).pad(10).row();
+
+        if (!isHost) {
+            dialog.getContentTable().add(new Label("Enter lobby code:", skin)).pad(10);
+            dialog.getContentTable().add(codeField).width(300).pad(10).row();
+        }
+
+        dialog.button("OK", true);
+        dialog.button("Cancel", false);
+        dialog.show(stage);
+    }
+
+    public void showJoinDialog() {
+        showNameInputDialog(false);
+    }
+
+    public void showError(String message) {
+        new Dialog("Error", skin) {
+            {
+                text(message);
+                button("OK");
+            }
+        }.show(stage);
     }
 
     @Override
