@@ -119,6 +119,7 @@ public class MainMenuView implements Screen {
         );
     }
 
+
     public void showError(String msg) {
         Dialog d = new Dialog("Error", skin);
         d.text(msg);
