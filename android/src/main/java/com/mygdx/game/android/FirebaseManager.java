@@ -1,5 +1,7 @@
 package com.mygdx.game.android;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.*;
 import com.mygdx.game.FirebaseInterface;
 import java.util.HashMap;
@@ -45,6 +47,8 @@ public class FirebaseManager implements FirebaseInterface {
     @Override public void startGame(String lobbyCode, String drawerName) {
         database.getReference("lobbies/" + lobbyCode)
             .child("status").setValue("drawing:" + drawerName);
+
+        database.getReference("lobbies/"+lobbyCode+"/word").setValue("word");
     }
 
     @Override public void leaveLobby(String lobbyCode, String playerName) {
@@ -90,6 +94,27 @@ public class FirebaseManager implements FirebaseInterface {
     // Word‐round stubs (compiler happy; flesh out later)
     @Override public void fetchWords(FirestoreCallback cb) { cb.onSuccess(java.util.List.of("Cat","Dog")); }
     @Override public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+
+    @Override
+    public void getChosenWord(String lobbyCode, WordCallback callback) {
+        DatabaseReference wordRef = database.getReference("lobbies/"+lobbyCode+"/word");
+        wordRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    String word = snapshot.getValue(String.class);
+                    callback.onSuccess(word);
+                } else {
+                    callback.onFailure(new Exception("No word set yet"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure(error.toException());
+            }
+        });
+    }
 
     private String generateLobbyCode() {
         String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

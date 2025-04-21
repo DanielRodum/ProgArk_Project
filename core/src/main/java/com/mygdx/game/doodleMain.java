@@ -30,6 +30,12 @@ public class doodleMain extends Game {
             firebaseService = new FirebaseInterface() {
                 @Override public void fetchWords(FirestoreCallback cb)     { cb.onSuccess(java.util.List.of()); }
                 @Override public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+
+                @Override
+                public void getChosenWord(String lobbyCode, WordCallback callback) {
+                    callback.onSuccess(lobbyCode);
+                }
+
                 @Override public void createLobby(String h, LobbyCallback cb) { cb.onFailure("Offline"); }
                 @Override public void joinLobby(String c, String p, LobbyCallback cb) { cb.onFailure("Offline"); }
                 @Override public void startGame(String l, String d)        {}
