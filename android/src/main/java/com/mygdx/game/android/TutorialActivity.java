@@ -11,62 +11,58 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-
 public class TutorialActivity extends Activity {
     private WebView webView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         RelativeLayout layout = new RelativeLayout(this);
 
+        // WebView setup
         webView = new WebView(this);
         webView.setWebViewClient(new WebViewClient());
-
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setMediaPlaybackRequiresUserGesture(false);
-
+        WebSettings ws = webView.getSettings();
+        ws.setJavaScriptEnabled(true);
+        ws.setMediaPlaybackRequiresUserGesture(false);
         try {
             webView.loadUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-        }catch (Exception e){
-            Log.e("TutorialActivity", "WebView failed to load video", e);
+        } catch (Exception e) {
+            Log.e("TutorialActivity", "WebView load failed", e);
         }
 
-
-        Button backButton = new Button(this);
-        backButton.setText("Back to Main Menu");
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-            }
+        // Back button
+        Button back = new Button(this);
+        back.setText("Back to Main Menu");
+        back.setOnClickListener(v -> {
+            setResult(Activity.RESULT_OK);
+            finish();
         });
 
-        RelativeLayout.LayoutParams webViewParams = new RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
-        );
-        layout.addView(webView, webViewParams);
+        // Layout params
+        RelativeLayout.LayoutParams wParams =
+            new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
+            );
+        layout.addView(webView, wParams);
 
-        RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        buttonParams.setMargins(0,0,0,50);
-        layout.addView(backButton, buttonParams);
+        RelativeLayout.LayoutParams bParams =
+            new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+        bParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        bParams.setMargins(0,0,0,50);
+        layout.addView(back, bParams);
 
         setContentView(layout);
     }
 
     @Override
-    protected void onDestroy(){
-        if (webView != null){
-            webView.destroy();
-        }
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
         super.onDestroy();
     }
 }

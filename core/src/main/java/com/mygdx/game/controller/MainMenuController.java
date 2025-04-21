@@ -3,10 +3,9 @@ package com.mygdx.game.controller;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
-import com.mygdx.game.view.CreateLobbyView;
 import com.mygdx.game.view.MainMenuView;
 import com.mygdx.game.view.TutorialView;
-import com.mygdx.game.view.JoinLobbyView;
+import com.mygdx.game.view.WaitingView;
 
 public class MainMenuController {
     private final doodleMain game;
@@ -18,13 +17,14 @@ public class MainMenuController {
     }
 
     public void handleCreateLobby() {
-        view.showNameInputDialog(true); // true = is host
+        view.showNameInputDialog(true);
     }
 
     public void handleJoinLobby() {
-        view.showJoinDialog();
+        view.showNameInputDialog(false);
     }
 
+    /** Switches to the libGDX TutorialView, which immediately calls openTutorial(). */
     public void handleTutorial() {
         game.setScreen(new TutorialView(game));
     }
@@ -34,38 +34,42 @@ public class MainMenuController {
             view.showError("Please enter a valid name");
             return;
         }
-
         game.setPlayerName(playerName);
-        String lobbyCode = generateLobbyCode();
-        game.setScreen(new CreateLobbyView(game, lobbyCode));
+        game.getFirebaseService().createLobby(playerName, new FirebaseInterface.LobbyCallback() {
+            @Override public void onSuccess(String code) {
+                Gdx.app.postRunnable(() ->
+                    game.setScreen(new WaitingView(game, code, true))
+                );
+            }
+            @Override public void onFailure(String error) {
+                Gdx.app.postRunnable(() ->
+                    view.showError("Create failed: " + error)
+                );
+            }
+        });
     }
 
     public void joinLobbyWithName(String playerName, String lobbyCode) {
-        game.setPlayerName(playerName);
-        game.getFirebaseService().joinLobby(lobbyCode, playerName,
-            new FirebaseInterface.LobbyCallback() {
-                @Override
-                public void onSuccess(String code) {
-                    Gdx.app.postRunnable(() ->
-                        game.setScreen(new JoinLobbyView(game, code))
-                    );
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    Gdx.app.postRunnable(() ->
-                        view.showError("Join failed: " + error)
-                    );
-                }
-            });
-    }
-
-    private String generateLobbyCode() {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        StringBuilder code = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            code.append(chars.charAt((int) (Math.random() * chars.length())));
+        if (playerName == null || playerName.trim().isEmpty()) {
+            view.showError("Please enter a valid name");
+            return;
         }
-        return code.toString();
+        if (lobbyCode == null || lobbyCode.trim().isEmpty()) {
+            view.showError("Please enter a valid lobby code");
+            return;
+        }
+        game.setPlayerName(playerName);
+        game.getFirebaseService().joinLobby(lobbyCode, playerName, new FirebaseInterface.LobbyCallback() {
+            @Override public void onSuccess(String code) {
+                Gdx.app.postRunnable(() ->
+                    game.setScreen(new WaitingView(game, code, false))
+                );
+            }
+            @Override public void onFailure(String error) {
+                Gdx.app.postRunnable(() ->
+                    view.showError("Join failed: " + error)
+                );
+            }
+        });
     }
 }
