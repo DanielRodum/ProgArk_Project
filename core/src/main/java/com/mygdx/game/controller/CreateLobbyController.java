@@ -32,7 +32,7 @@ public class CreateLobbyController {
             }
             @Override public void onFailure(String error) {
                 Gdx.app.postRunnable(() -> {
-                    view.showError("Could not create: " + error);
+                    view.showError("Create failed: " + error);
                     view.returnToMainMenu();
                 });
             }
@@ -41,25 +41,11 @@ public class CreateLobbyController {
 
     private void setupListeners() {
         firebase.setupLobbyListener(lobbyCode, new FirebaseInterface.LobbyStateCallback() {
-            @Override public void onPlayerJoined(String name) {
-                Gdx.app.postRunnable(() -> view.addPlayer(name));
-            }
-            @Override public void onPlayerLeft(String name) {
-                Gdx.app.postRunnable(() -> view.removePlayer(name));
-            }
-            @Override public void onGameStarted(String drawer) {
-                gameStarting = true;
-                Gdx.app.postRunnable(() -> {
-                    // TODO: switch to DrawingView/GuessingView
-                    view.showStatus("Game starting…");
-                });
-            }
-            @Override public void onLobbyClosed() {
-                Gdx.app.postRunnable(() -> view.returnToMainMenu());
-            }
-            @Override public void onError(String msg) {
-                Gdx.app.postRunnable(() -> view.showError("Error: " + msg));
-            }
+            @Override public void onPlayerJoined(String n) { Gdx.app.postRunnable(() -> view.addPlayer(n)); }
+            @Override public void onPlayerLeft(String n)   { Gdx.app.postRunnable(() -> view.removePlayer(n)); }
+            @Override public void onGameStarted(String d)  { gameStarting = true; Gdx.app.postRunnable(() -> view.showStatus("Game starting…")); }
+            @Override public void onLobbyClosed()          { Gdx.app.postRunnable(() -> view.returnToMainMenu()); }
+            @Override public void onError(String m)        { Gdx.app.postRunnable(() -> view.showError("Error: " + m)); }
         });
     }
 

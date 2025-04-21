@@ -25,14 +25,13 @@ public class CreateLobbyView implements Screen {
     private final List<String> players = new ArrayList<>();
 
     public CreateLobbyView(doodleMain game, String initialCode) {
-        this.game = game;
+        this.game  = game;
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         buildUI(initialCode);
 
-        // wire the controller (it’ll call createLobby and listen)
         controller = new CreateLobbyController(game, this);
     }
 
@@ -48,7 +47,7 @@ public class CreateLobbyView implements Screen {
         playersTable = new Table();
         ScrollPane scroll = new ScrollPane(playersTable, skin);
         scroll.setFadeScrollBars(false);
-        root.add(scroll).size(400, 200).pad(10).row();
+        root.add(scroll).size(400,200).pad(10).row();
 
         Table btns = new Table();
         TextButton start = new TextButton("Start Game", skin);
@@ -72,48 +71,35 @@ public class CreateLobbyView implements Screen {
         root.add(btns).pad(10);
     }
 
-    /** Called by controller to update the code label. */
     public void setLobbyCode(String code) {
         codeLabel.setText("Lobby Code: " + code);
     }
-
-    /** Add a player to the list. */
     public void addPlayer(String name) {
         if (!players.contains(name)) players.add(name);
         refreshPlayers();
     }
-
-    /** Remove a player. */
     public void removePlayer(String name) {
         players.remove(name);
         refreshPlayers();
     }
-
     private void refreshPlayers() {
         playersTable.clear();
         for (int i = 0; i < players.size(); i++) {
-            Label lbl = new Label((i+1) + ". " + players.get(i), skin);
-            lbl.setFontScale(1.5f);
-            playersTable.add(lbl).expandX().fillX().pad(5).row();
+            Label l = new Label((i+1) + ". " + players.get(i), skin);
+            l.setFontScale(1.5f);
+            playersTable.add(l).expandX().fillX().pad(5).row();
         }
     }
-
-    /** For controller to guard “start” logic. */
-    public int getPlayerCount() {
-        return players.size();
-    }
-
+    public int getPlayerCount() { return players.size(); }
     public void showError(String msg) {
         Dialog d = new Dialog("Error", skin);
         d.text(msg);
         d.button("OK");
         d.show(stage);
     }
-
     public void showStatus(String msg) {
         codeLabel.setText(msg);
     }
-
     public void returnToMainMenu() {
         game.setScreen(new MainMenuView(game));
     }

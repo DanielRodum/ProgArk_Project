@@ -25,21 +25,11 @@ public class WaitingController {
 
     private void setupListeners() {
         firebase.setupLobbyListener(lobbyCode, new FirebaseInterface.LobbyStateCallback() {
-            @Override public void onPlayerJoined(String name) {
-                Gdx.app.postRunnable(() -> view.addPlayer(name));
-            }
-            @Override public void onPlayerLeft(String name) {
-                Gdx.app.postRunnable(() -> view.removePlayer(name));
-            }
-            @Override public void onGameStarted(String drawer) {
-                Gdx.app.postRunnable(() -> view.onGameStarted(drawer));
-            }
-            @Override public void onLobbyClosed() {
-                Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game)));
-            }
-            @Override public void onError(String msg) {
-                Gdx.app.postRunnable(() -> view.addPlayer("Error: " + msg));
-            }
+            @Override public void onPlayerJoined(String n) { Gdx.app.postRunnable(() -> view.addPlayer(n)); }
+            @Override public void onPlayerLeft(String n)   { Gdx.app.postRunnable(() -> view.removePlayer(n)); }
+            @Override public void onGameStarted(String d)  { Gdx.app.postRunnable(() -> view.onGameStarted(d)); }
+            @Override public void onLobbyClosed()          { Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game))); }
+            @Override public void onError(String m)        { /* ignore or log */ }
         });
     }
 
