@@ -3,6 +3,7 @@ package com.mygdx.game.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.services.PlatformService;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -12,10 +13,10 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new doodleMain(new doodleMain.AndroidBridge() {
+        return new Lwjgl3Application(new doodleMain(new PlatformService() {
             @Override
-            public void openTutorial() {
-                //TODO:add something here
+            public void openTutorialVideo() {
+                //TODO: fix this
             }
         }), getDefaultConfiguration());
     }

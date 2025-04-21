@@ -20,11 +20,11 @@ public class TutorialView implements Screen {
         stage = new Stage(new ScreenViewport());
         //Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        //skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
+        //Table table = new Table();
+        //table.setFillParent(true);
+        //stage.addActor(table);
         game.openTutorial();
 
         //Texture videoTexture = new Texture(Gdx.files.internal("example-video-frame.png"));
@@ -47,14 +47,12 @@ public class TutorialView implements Screen {
 
     @Override
     public void render(float delta) {
-        stage.act();
-        stage.draw();
+        //stage.act();
+        //stage.draw();
     }
 
     @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
+    public void resize(int width, int height) {}
 
     @Override
     public void pause() {
@@ -74,6 +72,6 @@ public class TutorialView implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }
