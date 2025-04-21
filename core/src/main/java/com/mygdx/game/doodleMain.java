@@ -1,55 +1,49 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.view.MainMenuView;
-
-import java.util.List;
+import com.mygdx.game.controller.gamecontrollers.GameLogicController;
+import com.mygdx.game.model.GameLogicModel;
+import com.mygdx.game.model.Player;
+import com.mygdx.game.model.WordBank;
+import com.mygdx.game.view.gameviews.MainMenuView;
 
 public class doodleMain extends Game {
-    private SpriteBatch batch;
-    private Texture image;
     private FirebaseInterface firebaseService;
-    private List<String> wordBank;
+    private WordBank wordBank;
+    private GameLogicController gameLogicController;
 
-    public void setFirebaseService(FirebaseInterface service) {
-        this.firebaseService = service;
-        fetchWords();
+    @Override
+    public void create() {
+        // 1) Create or retrieve the local player (from login/lobby flow)
+        Player me = new Player("unique‑id‑123", "MyName");
+
+        // 2) Initialize your shared models
+        wordBank = new WordBank();
+        GameLogicModel gameModel = new GameLogicModel();
+
+        // 3) Create the central game logic controller — passing in the local player
+        gameLogicController = new GameLogicController(this, gameModel, wordBank, me);
+
+        // 4) Show the main menu
+        setScreen(new MainMenuView(this));
+    }
+
+    public void setFirebaseService(FirebaseInterface firebaseService) {
+        this.firebaseService = firebaseService;
+        if (wordBank != null) wordBank.setFirebaseService(firebaseService);
     }
 
     public FirebaseInterface getFirebaseService() {
         return firebaseService;
     }
 
-
-    private void fetchWords() {
-        if (firebaseService != null) {
-            firebaseService.fetchWords(new FirebaseInterface.FirestoreCallback() {
-                @Override
-                public void onSuccess(List<String> words) {
-                    wordBank = words;
-                    Gdx.app.log("Firebase", "Loaded words: " + words);
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    Gdx.app.error("Firebase", "Failed to load words", e);
-                }
-            });
-        }
-    }
-
-    public List<String> getWordBank() {
+    public WordBank getWordBank() {
         return wordBank;
     }
 
-    @Override
-    public void create(){
-        setScreen(new MainMenuView(this));
+    /** Expose the controller so views/controllers can use it. */
+    public GameLogicController getGameLogicController() {
+        return gameLogicController;
     }
 
     @Override

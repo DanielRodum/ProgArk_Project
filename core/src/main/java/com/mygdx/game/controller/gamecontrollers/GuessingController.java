@@ -1,32 +1,36 @@
 package com.mygdx.game.controller.gamecontrollers;
 
-import com.mygdx.game.model.GameStateModel;
+import com.mygdx.game.doodleMain;
+import com.mygdx.game.view.gameviews.GuessingView;
+import com.mygdx.game.model.GameLogicModel;
+import com.mygdx.game.model.Guess;
 import com.mygdx.game.model.Player;
-import com.mygdx.game.view.gameViews.GuessingView;
 
 public class GuessingController {
+    private final doodleMain game;
+    private final GuessingView view;
+    private final GameLogicModel model;
+    private final Player localPlayer;
 
-    private GameStateModel gameState;
-    private GuessingView view;
-    private Player player;
-
-    public GuessingController(GameStateModel gameState, GuessingView view, Player player) {
-        this.gameState = gameState;
+    public GuessingController(doodleMain game, GuessingView view, GameLogicModel model, Player localPlayer) {
+        this.game = game;
         this.view = view;
-        this.player = player;
+        this.model = model;
+        this.localPlayer = localPlayer;
+        view.displayMaskedWord(model.getMaskedWord());
     }
 
-    public void startGuessingPhase() {
-        String maskedWord = gameState.getMaskedWord();
-        view.displayMaskedWord(maskedWord);
-    }
-
-    public void handleGuess(String guess) {
-        gameState.addGuess(player, guess, guess.equalsIgnoreCase(gameState.getCurrentWord()));
-        if (guess.equalsIgnoreCase(gameState.getCurrentWord())) {
-            view.showCorrectGuessFeedback();
+    /**
+     * Called when the guesser submits a guess.
+     */
+    public void onGuessSubmitted(String guessText) {
+        Guess guess = new Guess(localPlayer.getId(), guessText);
+        model.addGuess(guess);
+        if (guess.isCorrect()) {
+            view.showCorrectFeedback();
+            // TODO: notify GameLogicController to end the round or update scores
         } else {
-            view.showIncorrectGuessFeedback();
+            view.showIncorrectFeedback();
         }
     }
 }

@@ -1,25 +1,35 @@
 package com.mygdx.game.view.gameviews;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.mygdx.game.model.GameStateModel;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.doodleMain;
 
-public class DrawingView extends Table {
-    public DrawingView(Skin skin, String word) {
-        setFillParent(true);
-        center();
+public class DrawingView implements Screen {
+    private final doodleMain game;
+    private ShapeRenderer shapeRenderer;
 
-        // Display the word at the top for the drawing player
-        Label wordLabel = new Label("Word: " + word, skin);
-        add(wordLabel).colspan(3).padBottom(20f).row();
-
-        // Add the drawing canvas (this could later be replaced with an actual drawing area)
-        Label placeholderLabel = new Label("Draw here!", skin);
-        placeholderLabel.setFontScale(2);
-        add(placeholderLabel).expand().fill();
-
-        row();
+    public DrawingView(doodleMain game) {
+        this.game = game;
+        shapeRenderer = new ShapeRenderer();
     }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Placeholder: drawing logic would go here
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLACK);
+        // shapeRenderer.line(x1, y1, x2, y2); // will come later
+        shapeRenderer.end();
+    }
+
+    @Override public void resize(int width, int height) {}
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { shapeRenderer.dispose(); }
 }

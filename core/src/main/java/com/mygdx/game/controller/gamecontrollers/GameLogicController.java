@@ -1,36 +1,70 @@
 package com.mygdx.game.controller.gamecontrollers;
 
-import com.mygdx.game.model.GameStateModel;
+import com.mygdx.game.doodleMain;
+import com.mygdx.game.model.GameLogicModel;
 import com.mygdx.game.model.Player;
+import com.mygdx.game.model.WordBank;
+import com.mygdx.game.view.gameviews.*;
+
+import java.util.List;
 
 public class GameLogicController {
-    private GameStateModel gameState;
-    private List<String> wordBank;
+    private final doodleMain game;
+    private final GameLogicModel model;
+    private final WordBank wordBank;
+    private final Player localPlayer;      // ← new field
 
-    public GameLogicController(GameStateModel gameState, List<String> wordBank) {
-        this.gameState = gameState;
+    public GameLogicController(
+        doodleMain game,
+        GameLogicModel model,
+        WordBank wordBank,
+        Player localPlayer        // ← accept local player here
+    ) {
+        this.game = game;
+        this.model = model;
         this.wordBank = wordBank;
+        this.localPlayer = localPlayer;
     }
 
-    public void startGame() {
-        startNewRound();
+    /** Start the very first game with the given players. */
+    public void startGame(List<Player> players) {
+        for (Player p : players) model.addPlayer(p);
+        nextRound();
     }
 
-    public void startNewRound() {
-        String randomWord = wordBank.getRandomWord();
-        gameState.startNewRound(randomWord);
-        System.out.println("New round started! Drawer: " + gameState.getCurrentDrawer().getName());
-    }
+    /** Advance to the next drawer and swap screens. */
+    public void nextRound() {
+        model.nextDrawer();
+        Player drawer = model.getCurrentDrawer();
 
-    public void submitGuess(Player player, String guess) {
-        boolean isCorrect = guess.equalsIgnoreCase(gameState.getCurrentWord());
-        gameState.addGuess(player, guess, isCorrect);
-        player.updateStats(isCorrect);
-
-        if (isCorrect) {
-            System.out.println(player.getName() + " guessed correctly! Points awarded.");
+        if (drawer.equals(localPlayer)) {
+            // this client is the drawer
+            ChooseWordView choose = new ChooseWordView(game, /* pass controller later */);
+            game.setScreen(choose);
+            new ChooseWordController(game, choose);
         } else {
-            System.out.println(player.getName() + " guessed: " + guess);
+            // this client is a guesser
+            WaitingForWordView wait = new WaitingForWordView(game, drawer.getName());
+            game.setScreen(wait);
+            new WaitingForWordController(game, wait, drawer.getName());
         }
     }
+
+    /** Called when the drawer picks a word. */
+    public void startRound(String word) {
+        model.startRound(word);
+        Player drawer = model.getCurrentDrawer();
+
+        if (drawer.equals(localPlayer)) {
+            DrawingView draw = new DrawingView(game);
+            game.setScreen(draw);
+            new DrawingController(game, draw);
+        } else {
+            GuessingView guess = new GuessingView(game);
+            game.setScreen(guess);
+            new GuessingController(game, guess, model, localPlayer);
+        }
+    }
+
+    // ... endRound(), etc ...
 }

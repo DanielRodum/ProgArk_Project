@@ -1,29 +1,33 @@
 package com.mygdx.game.view.gameviews;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.mygdx.game.doodleMain;
 
-/**
- * View displayed to guessing players while the drawer selects a word.
- */
-public class WaitingForWordView extends Table {
-    /**
-     * Constructs the waiting view.
-     *
-     * @param skin        UI skin to style the label
-     * @param drawerName  Name of the player who is choosing a word
-     */
-    public WaitingForWordView(Skin skin, String drawerName) {
-        super();
-        setFillParent(true);
-        // Center the content
-        defaults().expand().fill().center();
+public class WaitingForWordView implements Screen {
+    private final Stage stage;
+    private final Skin skin;
 
-        Label waitingLabel = new Label(drawerName + " is choosing a word...", skin);
-        waitingLabel.setAlignment(Align.center);
+    public WaitingForWordView(doodleMain game, String playerName) {
+        this.stage = new Stage();
+        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Gdx.input.setInputProcessor(stage);
 
-        add(waitingLabel);
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        Label waitingLabel = new Label(playerName + ", waiting for the drawer to choose...", skin);
+        waitingLabel.setFontScale(1.5f);
+        table.add(waitingLabel);
     }
+
+    @Override public void render(float delta) { stage.act(delta); stage.draw(); }
+    @Override public void resize(int width, int height) { stage.getViewport().update(width, height, true); }
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { stage.dispose(); skin.dispose(); }
 }

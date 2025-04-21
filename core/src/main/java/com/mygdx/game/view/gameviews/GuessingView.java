@@ -1,33 +1,51 @@
 package com.mygdx.game.view.gameviews;
 
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.utils.Align;
+import com.mygdx.game.doodleMain;
+import com.mygdx.game.controller.gamecontrollers.GuessingController;
 
-public class GuessingView extends Table {
-    public GuessingView(Skin skin, String word) {
-        setFillParent(true);
-        center();
+public class GuessingView implements Screen {
+    private final Stage stage;
+    private final Skin skin;
+    private final GuessingController controller;
 
-        // Display the masked word
-        String maskedWord = word.replaceAll("[a-zA-Z]", "_ ");
-        Label maskedWordLabel = new Label("Guess the word: " + maskedWord, skin);
-        add(maskedWordLabel).padBottom(20f).row();
+    public GuessingView(doodleMain game) {
+        this.stage = new Stage();
+        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        this.controller = new GuessingController(game);
+        Gdx.input.setInputProcessor(stage);
 
-        // Text field for the guess input
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        Label guessLabel = new Label("Enter your guess:", skin);
+        guessLabel.setFontScale(1.2f);
+
         TextField guessField = new TextField("", skin);
-        guessField.setMessageText("Enter your guess...");
-        add(guessField).width(300f).padBottom(20f).row();
+        TextButton submitBtn = new TextButton("Submit", skin);
 
-        // Button for submitting guess (just a placeholder here for now)
-        TextButton submitButton = new TextButton("Submit Guess", skin);
-        submitButton.addListener(new ClickListener() {
+        submitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                String guess = guessField.getText();
-                System.out.println("Guess: " + guess); // Placeholder for submitting guess logic
+                controller.submitGuess(guessField.getText());
+                guessField.setText("");
             }
         });
-        add(submitButton).pad(10f).row();
+
+        table.add(guessLabel).padBottom(20).row();
+        table.add(guessField).width(300).padBottom(10).row();
+        table.add(submitBtn).width(200).height(60);
     }
+
+    @Override public void render(float delta) { stage.act(delta); stage.draw(); }
+    @Override public void resize(int width, int height) { stage.getViewport().update(width, height, true); }
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { stage.dispose(); skin.dispose(); }
 }
