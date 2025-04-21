@@ -14,8 +14,6 @@ import com.mygdx.game.services.PlatformService;
 public class AndroidLauncher extends AndroidApplication implements PlatformService {
     private doodleMain game;
     private static final int TUTORIAL_REQUEST_CODE = 1001;
-    private static final int REQUEST_TUTORIAL = 1;
-    private boolean returnToMenu = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

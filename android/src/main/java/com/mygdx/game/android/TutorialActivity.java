@@ -11,9 +11,6 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.mygdx.game.R;
-
-import java.security.spec.ECField;
 
 public class TutorialActivity extends Activity {
     private WebView webView;
@@ -25,14 +22,12 @@ public class TutorialActivity extends Activity {
         RelativeLayout layout = new RelativeLayout(this);
 
         webView = new WebView(this);
-        //setContentView(webView);
         webView.setWebViewClient(new WebViewClient());
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setMediaPlaybackRequiresUserGesture(false);
 
-        //webView.setWebViewClient(new WebViewClient());
         try {
             webView.loadUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         }catch (Exception e){
