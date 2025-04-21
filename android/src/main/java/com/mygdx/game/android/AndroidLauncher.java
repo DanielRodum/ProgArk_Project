@@ -18,7 +18,7 @@ public class AndroidLauncher extends AndroidApplication {
 
         // Initialize database structure
         firebase.initializeDatabaseStructure(() -> {
-            doodleMain game = new doodleMain();
+            doodleMain game = new doodleMain(this);
             game.setFirebaseService(firebase);
             initialize(game, configuration);
         });
