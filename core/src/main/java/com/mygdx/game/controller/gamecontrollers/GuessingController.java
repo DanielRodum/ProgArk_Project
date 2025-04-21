@@ -29,12 +29,12 @@ public class GuessingController {
 
         String correctWord = gameLogic.getCurrentWord();
 
+        gameLogic.guessWord(player, guess);
+
         if (guess.trim().equalsIgnoreCase(correctWord)) {
             guessingView.showCorrectFeedback();
         } else {
             guessingView.showIncorrectFeedback();
         }
-
-        gameLogic.guessWord(player, guess);
     }
 }
