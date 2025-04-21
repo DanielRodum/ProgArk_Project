@@ -23,7 +23,7 @@ public class WaitingView implements Screen {
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
-        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        this.skin  = new Skin(Gdx.files.internal("uiskin.json"));
 
         Table root = new Table();
         root.setFillParent(true);
@@ -64,17 +64,15 @@ public class WaitingView implements Screen {
     }
 
     public void addPlayer(String name) {
-        playersTable.add(new Label(name, skin)).row();
+        Label l = new Label(name, skin);
+        l.setFontScale(1.5f);
+        playersTable.add(l).row();
     }
     public void removePlayer(String name) {
-        // simplest: clear and show joiners afresh; or track a list
         playersTable.clear();
     }
-
-    public void onGameStarted(String drawerName) {
-        Gdx.app.postRunnable(() -> {
-            // TODO: if you have GuessingView/DrawingView, switch here
-        });
+    public void onGameStarted(String drawer) {
+        // stub: someone else implements DrawingView/GuessingView
     }
 
     @Override public void render(float delta) {

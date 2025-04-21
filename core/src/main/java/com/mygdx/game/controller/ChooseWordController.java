@@ -36,9 +36,7 @@ public class ChooseWordController {
     public void selectWord(String word) {
         firebase.startDrawingRound(lobbyCode, word, new FirebaseInterface.LobbyCallback() {
             @Override public void onSuccess(String msg) {
-                Gdx.app.postRunnable(() -> {
-                    // TODO: switch to DrawingView
-                });
+                // stub: next screen is implemented by someone else
             }
             @Override public void onFailure(String err) {
                 Gdx.app.postRunnable(() -> view.showError("Could not start round"));

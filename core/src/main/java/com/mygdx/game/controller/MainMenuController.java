@@ -23,8 +23,15 @@ public class MainMenuController {
         view.showNameInputDialog(false);
     }
 
+    public void handleTutorial() {
+        String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        if (!Gdx.net.openURI(url)) {
+            view.showError("Could not launch tutorial");
+        }
+    }
+
     public void createLobbyWithName(String playerName) {
-        if (playerName == null || playerName.trim().isEmpty()) {
+        if (playerName.trim().isEmpty()) {
             view.showError("Please enter a valid name");
             return;
         }
@@ -44,11 +51,11 @@ public class MainMenuController {
     }
 
     public void joinLobbyWithName(String playerName, String lobbyCode) {
-        if (playerName == null || playerName.trim().isEmpty()) {
+        if (playerName.trim().isEmpty()) {
             view.showError("Please enter a valid name");
             return;
         }
-        if (lobbyCode == null || lobbyCode.trim().isEmpty()) {
+        if (lobbyCode.trim().isEmpty()) {
             view.showError("Please enter a valid lobby code");
             return;
         }
