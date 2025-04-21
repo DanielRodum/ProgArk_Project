@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.game.controller.ChooseWordController;
+import com.mygdx.game.controller.gamecontrollers.ChooseWordController;
 import com.mygdx.game.doodleMain;
 
 import java.util.List;
