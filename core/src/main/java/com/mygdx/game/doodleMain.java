@@ -70,5 +70,46 @@ public class doodleMain extends Game {
         super.dispose();
         batch.dispose();
         firebaseService.leaveLobby("any", playerName);
+        super.dispose();
     }
+
+    /** A simple no‑op stub so desktop runs without Firebase. */
+    private static class NullFirebaseManager implements FirebaseInterface {
+        @Override public void fetchWords(FirestoreCallback cb) {
+            cb.onSuccess(java.util.List.of("Cat", "Dog", "House"));
+        }
+
+        @Override public void startDrawingRound(String l, String w, LobbyCallback cb) {
+            cb.onSuccess(l);
+        }
+
+        @Override public void createLobby(String h, LobbyCallback cb) {
+            cb.onFailure("Offline");
+        }
+
+        @Override public void joinLobby(String c, String p, LobbyCallback cb) {
+            cb.onFailure("Offline");
+        }
+
+        @Override public void startGame(String l, String d) {}
+
+        @Override public void leaveLobby(String l, String p) {}
+
+        @Override public void setupLobbyListener(String l, LobbyStateCallback c) {}
+
+        @Override public void initializeDatabaseStructure(Runnable rc) {
+            rc.run();
+        }
+
+        @Override
+        public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
+            callback.onFailure("Offline");
+        }
+
+        @Override
+        public void getChosenWord(String lobbyCode, WordCallback callback) {
+            callback.onFailure(new Exception("Offline mode — no word available"));
+        }
+    }
+
 }

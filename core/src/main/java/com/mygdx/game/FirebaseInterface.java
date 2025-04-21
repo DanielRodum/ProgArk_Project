@@ -7,7 +7,6 @@ public interface FirebaseInterface {
     // Word‐round APIs
     void fetchWords(FirestoreCallback callback);
     void startDrawingRound(String lobbyCode, String word, LobbyCallback callback);
-    void getChosenWord(String lobbyCode, WordCallback callback);
 
     // Lobby‐management callbacks
     interface LobbyCallback {
@@ -32,6 +31,9 @@ public interface FirebaseInterface {
         void onSuccess(String word);
         void onFailure(Exception e);
     }
+
+    void saveChosenWord(String lobbyCode, String word, LobbyCallback callback);
+    void getChosenWord(String lobbyCode, WordCallback callback);
 
     // Lobby‐management methods
     void createLobby(String hostName, LobbyCallback callback);
