@@ -5,7 +5,6 @@ import java.util.List;
 
 public class GameLogic {
     private List<Player> players;
-    private Player currentDrawer;
     private String currentWord;
     private GameState gameState;
     private int currentRound;
@@ -29,7 +28,7 @@ public class GameLogic {
     public void addPlayer(Player player) {
         players.add(player);
         if (players.size() == 1) {
-            currentDrawer = player;
+            player.isDrawer();
         }
         this.maxRounds = players.size();
     }
