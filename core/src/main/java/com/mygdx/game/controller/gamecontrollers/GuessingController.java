@@ -3,7 +3,6 @@ package com.mygdx.game.controller.gamecontrollers;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.gameviews.GuessingView;
 import com.mygdx.game.model.GameLogicModel;
-import com.mygdx.game.model.Guess;
 import com.mygdx.game.model.Player;
 
 public class GuessingController {

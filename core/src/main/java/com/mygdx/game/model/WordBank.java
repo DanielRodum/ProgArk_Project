@@ -1,3 +1,6 @@
+//Skal hentes fra firebase
+//
+
 package com.mygdx.game.model;
 
 import com.badlogic.gdx.Gdx;

@@ -1,3 +1,8 @@
+// Holde styr på currentWord
+// Holde styr på hvor mange som er ferdig med å gjette
+//
+
+
 package com.mygdx.game.model;
 
 import java.util.*;
