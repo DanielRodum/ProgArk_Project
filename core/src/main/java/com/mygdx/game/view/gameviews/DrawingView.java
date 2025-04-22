@@ -8,11 +8,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.controller.gamecontrollers.DrawingController;
@@ -34,6 +38,7 @@ public class DrawingView implements Screen {
 
     private Label wordLabel;
     private Label timerLabel;
+    private final List<Texture> colorTextures = new ArrayList<>();
 
     public DrawingView(doodleMain game, String lobbyCode){
         this.game = game;
@@ -69,25 +74,41 @@ public class DrawingView implements Screen {
         table.row().padTop(10);
 
         Table colorButtons = new Table();
-        addColorButton(colorButtons, Color.BLACK, skin);
-        addColorButton(colorButtons, Color.RED, skin);
-        addColorButton(colorButtons, Color.GREEN, skin);
-        addColorButton(colorButtons, Color.BLUE, skin);
+        addColorButton(colorButtons, Color.BLACK);
+        addColorButton(colorButtons, Color.RED);
+        addColorButton(colorButtons, Color.GREEN);
+        addColorButton(colorButtons, Color.BLUE);
+        addColorButton(colorButtons, Color.YELLOW);
+        addColorButton(colorButtons, Color.PINK);
+        addColorButton(colorButtons, Color.PURPLE);
+        addColorButton(colorButtons, Color.ORANGE);
+        addColorButton(colorButtons, Color.WHITE);
 
         table.add(colorButtons).colspan(2).center().padTop(20);
     }
 
-    private void addColorButton(Table table, Color color, Skin skin){
-        TextButton btn = new TextButton("", skin);
-        btn.setColor(color);
-        btn.getLabel().setText("");
+    private void addColorButton(Table table, Color color){
+        int size = 80;
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        colorTextures.add(texture);
+
+        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.imageUp = drawable;
+
+        ImageButton btn = new ImageButton(style);
         btn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent e, float x, float y){
                 currentColor = new Color(color);
             }
         });
-        table.add(btn).size(80).pad(10);
+        table.add(btn).size(size).pad(10);
     }
 
     private InputProcessor createDrawingInputProcessor(){
@@ -174,6 +195,7 @@ public class DrawingView implements Screen {
     public void dispose() {
         uiStage.dispose();
         shapeRenderer.dispose();
+        for (Texture t : colorTextures) t.dispose();
     }
 
     //helper class for strokes
@@ -193,16 +215,8 @@ public class DrawingView implements Screen {
             for (int i=1; i<points.size(); i++){
                 Vector2 p1 = points.get(i-1);
                 Vector2 p2 = points.get(i);
-                drawThickLine(renderer, p1, p2, 10f);
+                renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
             }
-        }
-
-        private void drawThickLine(ShapeRenderer renderer, Vector2 p1, Vector2 p2, float thickness){
-            float angle = p2.cpy().sub(p1).angleRad();
-            float dx = (float)Math.cos(angle) * thickness / 2f;
-            float dy = (float)Math.sin(angle) * thickness / 2f;
-
-            renderer.rectLine(p1.x, p1.y, p2.x, p2.y, thickness);
         }
     }
 }
