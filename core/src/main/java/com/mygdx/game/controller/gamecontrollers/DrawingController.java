@@ -43,6 +43,21 @@ public class DrawingController {
     }
     private void startTimer(){
         timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Gdx.app.postRunnable(()->{
+                    secondsLeft--;
+                    view.setTime(secondsLeft);
+                    if (secondsLeft <= 0){
+                        timer.cancel();
+                        Gdx.app.postRunnable(()->{
+                            game.setScreen(new LeaderboardView());
+                        });
+                    }
+                });
+            }
+        }, 1000, 1000);
     }
 
     public void stopTimer(){
