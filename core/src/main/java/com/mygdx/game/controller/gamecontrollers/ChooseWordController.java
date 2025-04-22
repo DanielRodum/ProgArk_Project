@@ -14,8 +14,9 @@ public class ChooseWordController {
     private final FirebaseInterface firebase;
     private final String lobbyCode;
 
-    public ChooseWordController(doodleMain game, ChooseWordView view,
-                                String lobbyCode, boolean isHost) {
+    public ChooseWordController(doodleMain game,
+                                ChooseWordView view,
+                                String lobbyCode) {
         this.game      = game;
         this.view      = view;
         this.firebase  = game.getFirebaseService();
@@ -34,6 +35,8 @@ public class ChooseWordController {
         });
     }
 
+    /** Called when the drawer taps one of the three options.
+     Pushes the choice into Firebase under "currentWord" */
     public void selectWord(String word) {
         firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback(){
             @Override

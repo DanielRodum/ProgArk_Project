@@ -16,22 +16,20 @@ import java.util.List;
 public class ChooseWordView implements Screen {
     private final doodleMain game;
     private final String lobbyCode;
-    private final boolean isHost;
     private final Stage stage;
     private final Skin skin;
     private ChooseWordController controller;
 
-    public ChooseWordView(doodleMain game, String lobbyCode, boolean isHost) {
+    public ChooseWordView(doodleMain game, String lobbyCode) {
         this.game      = game;
         this.lobbyCode = lobbyCode;
-        this.isHost    = isHost;
 
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         this.skin  = new Skin(Gdx.files.internal("uiskin.json"));
 
         showLoading();
-        controller = new ChooseWordController(game, this, lobbyCode, isHost);
+        controller = new ChooseWordController(game, this, lobbyCode);
     }
 
     private void showLoading() {

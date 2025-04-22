@@ -82,6 +82,10 @@ public class FirebaseManager implements FirebaseInterface {
                 if (st!=null && st.startsWith("drawing:")) {
                     cb.onGameStarted(st.split(":")[1]);
                 }
+                String chosen = s.child("currentWord").getValue(String.class);
+                if (chosen != null) {
+                    cb.onWordChosen(chosen);
+                }
             }
             @Override public void onCancelled(DatabaseError e) { cb.onLobbyClosed(); }
         });
