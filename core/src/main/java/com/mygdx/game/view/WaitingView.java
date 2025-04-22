@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.controller.WaitingController;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.view.gameviews.DrawingView;
+import com.mygdx.game.view.gameviews.WaitingForWordView;
 
 public class WaitingView implements Screen {
     private final doodleMain game;
@@ -18,9 +20,11 @@ public class WaitingView implements Screen {
     private final Table playersTable;
     private final Label codeLabel;
     private final WaitingController controller;
+    private final String lobbyCode;
 
     public WaitingView(doodleMain game, String lobbyCode, boolean isHost) {
         this.game = game;
+        this.lobbyCode = lobbyCode;
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         this.skin  = new Skin(Gdx.files.internal("uiskin.json"));
@@ -72,7 +76,11 @@ public class WaitingView implements Screen {
         playersTable.clear();
     }
     public void onGameStarted(String drawer) {
-        // stub: someone else implements DrawingView/GuessingView
+        if (drawer.equals(game.getPlayerName())){
+            game.setScreen(new DrawingView(game, lobbyCode));
+        } else {
+            game.setScreen(new WaitingForWordView(game, drawer));
+        }
     }
 
     @Override public void render(float delta) {

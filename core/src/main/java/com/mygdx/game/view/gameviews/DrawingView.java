@@ -40,10 +40,10 @@ public class DrawingView implements Screen {
         this.uiStage = new Stage(viewport);
         this.shapeRenderer = new ShapeRenderer();
 
+        setupUI();
+
         Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, createDrawingInputProcessor()));
         this.controller = new DrawingController(game, this, lobbyCode);
-
-        setupUI();
     }
 
     private void setupUI(){
@@ -117,7 +117,9 @@ public class DrawingView implements Screen {
     }
 
     public void setWord(String word){
-        wordLabel.setText("Word: "+word);
+        if (wordLabel!=null){
+            wordLabel.setText("Word: "+word);
+        }
     }
 
     public void setTime(int seconds){

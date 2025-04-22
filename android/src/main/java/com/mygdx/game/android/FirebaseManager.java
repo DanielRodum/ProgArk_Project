@@ -93,7 +93,18 @@ public class FirebaseManager implements FirebaseInterface {
 
     // Word‐round stubs (compiler happy; flesh out later)
     @Override public void fetchWords(FirestoreCallback cb) { cb.onSuccess(java.util.List.of("Cat","Dog")); }
-    @Override public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+    @Override public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback cb) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("status", "drawer:"+drawer);
+        updates.put("word", word);
+
+        database.getReference("lobbies/"+lobbyCode).updateChildren(updates).addOnSuccessListener(__ -> cb.onSuccess(lobbyCode)).addOnFailureListener(e -> cb.onFailure(e.getMessage()));
+    }
+
+    @Override
+    public void startDrawingRound(String l, String w, LobbyCallback cb) {
+
+    }
 
     @Override
     public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {

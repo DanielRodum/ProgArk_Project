@@ -29,7 +29,19 @@ public class doodleMain extends Game {
             // stub to avoid NPE on desktop
             firebaseService = new FirebaseInterface() {
                 @Override public void fetchWords(FirestoreCallback cb)     { cb.onSuccess(java.util.List.of()); }
-                @Override public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+
+                @Override
+                public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
+
+                }
+
+                @Override
+                public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+
+                @Override
+                public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
+
+                }
 
                 @Override
                 public void getChosenWord(String lobbyCode, WordCallback callback) {
@@ -77,6 +89,11 @@ public class doodleMain extends Game {
     private static class NullFirebaseManager implements FirebaseInterface {
         @Override public void fetchWords(FirestoreCallback cb) {
             cb.onSuccess(java.util.List.of("Cat", "Dog", "House"));
+        }
+
+        @Override
+        public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
+
         }
 
         @Override public void startDrawingRound(String l, String w, LobbyCallback cb) {
