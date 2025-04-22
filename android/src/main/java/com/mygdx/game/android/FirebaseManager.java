@@ -3,13 +3,21 @@ package com.mygdx.game.android;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.*;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mygdx.game.FirebaseInterface;
+
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseManager implements FirebaseInterface {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference lobbyRef;
+    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     @Override
     public void createLobby(String hostName, LobbyCallback callback) {
@@ -92,7 +100,19 @@ public class FirebaseManager implements FirebaseInterface {
     }
 
     // Word‐round stubs (compiler happy; flesh out later)
-    @Override public void fetchWords(FirestoreCallback cb) { cb.onSuccess(java.util.List.of("Cat","Dog")); }
+    @Override public void fetchWords(FirestoreCallback cb) {
+        firestore.collection("WordBank").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                List<String> words = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : task.getResult()){
+                    words.add(doc.getString("word"));
+                }
+                cb.onSuccess(words);
+            } else {
+                cb.onFailure(task.getException());
+            }
+        });
+    }
     @Override public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback cb) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("status", "drawer:"+drawer);
