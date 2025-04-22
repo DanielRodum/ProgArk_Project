@@ -6,7 +6,7 @@ import java.util.List;
 public interface FirebaseInterface {
     // Word‐round APIs
     void fetchWords(FirestoreCallback callback);
-    void startDrawingRound(String lobbyCode, String word, LobbyCallback callback);
+    void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback);
 
     // Lobby‐management callbacks
     interface LobbyCallback {
@@ -31,6 +31,8 @@ public interface FirebaseInterface {
         void onSuccess(String word);
         void onFailure(Exception e);
     }
+
+    void startDrawingRound(String l, String w, LobbyCallback cb);
 
     void saveChosenWord(String lobbyCode, String word, LobbyCallback callback);
     void getChosenWord(String lobbyCode, WordCallback callback);

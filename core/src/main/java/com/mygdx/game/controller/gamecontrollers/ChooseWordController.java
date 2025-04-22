@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.gameviews.ChooseWordView;
+import com.mygdx.game.view.gameviews.DrawingView;
 
 import java.util.List;
 
@@ -37,24 +38,22 @@ public class ChooseWordController {
         firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback(){
             @Override
             public void onSuccess(String msg) {
-                firebase.startGame(lobbyCode, game.getPlayerName());
-                Gdx.app.postRunnable(()->{
-                    Gdx.app.log("ChooseWord", "Word saved & game started. Word: "+word);
+                firebase.startDrawingRound(lobbyCode, word, game.getPlayerName(), new FirebaseInterface.LobbyCallback(){
+                    @Override
+                    public void onSuccess(String code){
+                        Gdx.app.postRunnable(()->{
+                            game.setScreen(new DrawingView(game, lobbyCode));
+                        });
+                    }
+                    @Override
+                    public void onFailure(String error){
+                        Gdx.app.postRunnable(()->view.showError("Failed to start round: "+error));
+                    }
                 });
             }
-
             @Override
             public void onFailure(String err) {
                 Gdx.app.postRunnable(()->view.showError("Could not save word: "+err));
-            }
-        });
-
-        firebase.startDrawingRound(lobbyCode, word, new FirebaseInterface.LobbyCallback() {
-            @Override public void onSuccess(String msg) {
-                // stub: next screen is implemented by someone else
-            }
-            @Override public void onFailure(String err) {
-                Gdx.app.postRunnable(() -> view.showError("Could not start round"));
             }
         });
     }
