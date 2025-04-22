@@ -17,6 +17,7 @@ public interface FirebaseInterface {
         void onPlayerJoined(String playerName);
         void onPlayerLeft(String playerName);
         void onGameStarted(String drawerName);
+        void onWordChosen(String word);
         void onLobbyClosed();
         void onError(String message);
     }

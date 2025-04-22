@@ -29,6 +29,8 @@ public class WaitingController {
             @Override public void onPlayerJoined(String n) { Gdx.app.postRunnable(() -> view.addPlayer(n)); }
             @Override public void onPlayerLeft(String n)   { Gdx.app.postRunnable(() -> view.removePlayer(n)); }
             @Override public void onGameStarted(String d)  { Gdx.app.postRunnable(() -> view.onGameStarted(d)); }
+            @Override
+            public void onWordChosen(String word)          {/* ignore */}
             @Override public void onLobbyClosed()          { Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game))); }
             @Override public void onError(String m)        { /* ignore or log */ }
         });
@@ -37,7 +39,7 @@ public class WaitingController {
     public void handleStartGame() {
         //if (isHost) firebase.startGame(lobbyCode, game.getPlayerName());
         if (!isHost) return;
-        game.setScreen(new ChooseWordView(game, lobbyCode, true));
+        game.setScreen(new ChooseWordView(game, lobbyCode));
     }
 
     public void leaveLobby() {

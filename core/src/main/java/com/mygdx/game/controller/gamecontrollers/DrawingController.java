@@ -3,7 +3,7 @@ package com.mygdx.game.controller.gamecontrollers;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
-import com.mygdx.game.view.LeaderboardView;
+import com.mygdx.game.view.gameviews.LeaderboardView;
 import com.mygdx.game.view.gameviews.DrawingView;
 
 import java.util.Timer;
@@ -43,7 +43,7 @@ public class DrawingController {
     }
     private void startTimer(){
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Gdx.app.postRunnable(()->{
