@@ -79,7 +79,7 @@ public class WaitingView implements Screen {
         if (drawer.equals(game.getPlayerName())){
             game.setScreen(new DrawingView(game, lobbyCode));
         } else {
-            game.setScreen(new LeaderboardView());
+            game.setScreen(new LeaderboardView()); 
         }
     }
 
