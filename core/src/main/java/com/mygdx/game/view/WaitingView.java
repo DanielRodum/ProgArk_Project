@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.controller.WaitingController;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.gameviews.DrawingView;
-import com.mygdx.game.view.gameviews.WaitingForWordView;
+import com.mygdx.game.view.gameviews.LeaderboardView;
 
 public class WaitingView implements Screen {
     private final doodleMain game;
@@ -79,7 +79,7 @@ public class WaitingView implements Screen {
         if (drawer.equals(game.getPlayerName())){
             game.setScreen(new DrawingView(game, lobbyCode));
         } else {
-            game.setScreen(new WaitingForWordView(game, drawer));
+            game.setScreen(new LeaderboardView());
         }
     }
 

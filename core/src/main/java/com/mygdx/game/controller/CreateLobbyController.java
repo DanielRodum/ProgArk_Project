@@ -44,6 +44,8 @@ public class CreateLobbyController {
             @Override public void onPlayerJoined(String n) { Gdx.app.postRunnable(() -> view.addPlayer(n)); }
             @Override public void onPlayerLeft(String n)   { Gdx.app.postRunnable(() -> view.removePlayer(n)); }
             @Override public void onGameStarted(String d)  { gameStarting = true; Gdx.app.postRunnable(() -> view.showStatus("Game starting…")); }
+            @Override
+            public void onWordChosen(String word)          {/* ignore */}
             @Override public void onLobbyClosed()          { Gdx.app.postRunnable(() -> view.returnToMainMenu()); }
             @Override public void onError(String m)        { Gdx.app.postRunnable(() -> view.showError("Error: " + m)); }
         });
