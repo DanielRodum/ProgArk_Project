@@ -3,6 +3,7 @@ package com.mygdx.game.controller.gamecontrollers;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.view.LeaderboardView;
 import com.mygdx.game.view.gameviews.DrawingView;
 
 import java.util.Timer;
@@ -14,7 +15,7 @@ public class DrawingController {
     private final FirebaseInterface firebase;
     private final String lobbyCode;
     private String currentWord;
-    private int secondsLeft = 60;
+    private int secondsLeft = 30;
     private Timer timer;
 
     public DrawingController(doodleMain game, DrawingView view, String lobbyCode){
@@ -50,7 +51,9 @@ public class DrawingController {
                     view.setTime(secondsLeft);
                     if (secondsLeft <= 0){
                         timer.cancel();
-                        //TODO: transition to next round
+                        Gdx.app.postRunnable(()->{
+                            game.setScreen(new LeaderboardView());
+                        });
                     }
                 });
             }

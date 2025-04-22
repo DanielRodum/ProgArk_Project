@@ -20,6 +20,7 @@ import com.mygdx.game.doodleMain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class DrawingView implements Screen {
     private final doodleMain game;
@@ -36,7 +37,9 @@ public class DrawingView implements Screen {
 
     public DrawingView(doodleMain game, String lobbyCode){
         this.game = game;
-        this.viewport = new FitViewport(1080, 1920, new OrthographicCamera());
+        OrthographicCamera camera = new OrthographicCamera();
+        this.viewport = new FitViewport(1080, 1920, camera);
+        viewport.apply();
         this.uiStage = new Stage(viewport);
         this.shapeRenderer = new ShapeRenderer();
 
@@ -57,7 +60,7 @@ public class DrawingView implements Screen {
         wordLabel.setColor(Color.WHITE);
         wordLabel.setFontScale(2f);
 
-        timerLabel = new Label("60", skin);
+        timerLabel = new Label("30", skin);
         timerLabel.setColor(Color.YELLOW);
         timerLabel.setFontScale(2f);
 
@@ -128,7 +131,7 @@ public class DrawingView implements Screen {
 
     @Override
     public void show() {
-
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     @Override
@@ -136,7 +139,8 @@ public class DrawingView implements Screen {
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Stroke stroke : strokes){
             stroke.render(shapeRenderer);
         }
@@ -189,8 +193,16 @@ public class DrawingView implements Screen {
             for (int i=1; i<points.size(); i++){
                 Vector2 p1 = points.get(i-1);
                 Vector2 p2 = points.get(i);
-                renderer.line(p1.x, p1.y, p2.x, p2.y);
+                drawThickLine(renderer, p1, p2, 10f);
             }
+        }
+
+        private void drawThickLine(ShapeRenderer renderer, Vector2 p1, Vector2 p2, float thickness){
+            float angle = p2.cpy().sub(p1).angleRad();
+            float dx = (float)Math.cos(angle) * thickness / 2f;
+            float dy = (float)Math.sin(angle) * thickness / 2f;
+
+            renderer.rectLine(p1.x, p1.y, p2.x, p2.y, thickness);
         }
     }
 }
