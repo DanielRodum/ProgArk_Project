@@ -78,10 +78,43 @@ public class FirebaseManager implements FirebaseInterface {
         // clear previous round data
         lobby.child("strokes").removeValue();
         lobby.child("word").removeValue();
+        lobby.child("guessed").removeValue();
+        // set new round status
         Map<String,Object> upd = new HashMap<>();
         upd.put("status", "choosing");
         upd.put("currentDrawer", drawerName);
         lobby.updateChildren(upd);
+    }
+
+    @Override
+    public void recordGuess(String lobbyCode, String playerName) {
+        DatabaseReference ref = database.getReference(
+            "lobbies/" + lobbyCode + "/guessed/" + playerName);
+        ref.setValue(true);
+    }
+
+    @Override
+    public void subscribeToGuesses(String lobbyCode, GuessesCallback cb) {
+        DatabaseReference guessedRef = database.getReference(
+            "lobbies/" + lobbyCode + "/guessed");
+        DatabaseReference playersRef = database.getReference(
+            "lobbies/" + lobbyCode + "/players");
+
+        guessedRef.addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot snap) {
+                long guessedCount = snap.getChildrenCount();
+                playersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override public void onDataChange(DataSnapshot pSnap) {
+                        long total = pSnap.getChildrenCount() - 1; // excluding drawer
+                        if (guessedCount >= total) {
+                            cb.onAllGuessed();
+                        }
+                    }
+                    @Override public void onCancelled(DatabaseError e) {}
+                });
+            }
+            @Override public void onCancelled(DatabaseError e) {}
+        });
     }
 
     @Override

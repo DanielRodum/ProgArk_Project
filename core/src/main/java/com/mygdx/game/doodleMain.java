@@ -104,6 +104,16 @@ public class doodleMain extends Game {
                 public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) {
                     // no‐op
                 }
+
+                @Override
+                public void recordGuess(String lobbyCode, String playerName) {
+
+                }
+
+                @Override
+                public void subscribeToGuesses(String lobbyCode, GuessesCallback callback) {
+
+                }
             };
         }
 
@@ -134,36 +144,5 @@ public class doodleMain extends Game {
         batch.dispose();
         firebaseService.leaveLobby("any", playerName);
         super.dispose();
-    }
-
-    private static class NullFirebaseManager implements FirebaseInterface {
-        @Override
-        public void fetchWords(FirestoreCallback cb) {
-            cb.onSuccess(Collections.<String>emptyList());
-        }
-        @Override
-        public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
-            callback.onSuccess(lobbyCode);
-        }
-        @Override
-        public void startDrawingRound(String l, String w, LobbyCallback cb) {
-            cb.onSuccess(l);
-        }
-        @Override public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) { }
-        @Override public void getChosenWord(String lobbyCode, WordCallback callback) { callback.onSuccess(""); }
-
-        @Override public void createLobby(String h, LobbyCallback cb) { cb.onFailure("Offline"); }
-        @Override public void joinLobby(String c, String p, LobbyCallback cb) { cb.onFailure("Offline"); }
-        @Override public void startGame(String l, String d) { }
-        @Override public void leaveLobby(String l, String p) { }
-        @Override public void setupLobbyListener(String l, LobbyStateCallback c) { }
-        @Override public void initializeDatabaseStructure(Runnable rc) { rc.run(); }
-
-        // Java 8 replacements for the new methods:
-        @Override public void fetchPlayers(String lobbyCode, PlayersCallback cb) {
-            cb.onSuccess(Collections.<String>emptyList());
-        }
-        @Override public void sendStroke(String lobbyCode, String strokeId, List<Vector2> points, String colorHex) { }
-        @Override public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) { }
     }
 }

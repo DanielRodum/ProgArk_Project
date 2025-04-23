@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
+import com.mygdx.game.utils.RoundTimer;
 import com.mygdx.game.view.gameviews.DrawingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
@@ -21,8 +22,7 @@ public class DrawingController {
     private final String lobbyCode;
     private final String currentDrawer;
     private final GameLogic logic;
-    private int secondsLeft = 60;
-    private Timer timer;
+    private RoundTimer roundTimer;
 
     public DrawingController(doodleMain game, DrawingView view, String lobbyCode) {
         this.game          = game;
@@ -33,8 +33,39 @@ public class DrawingController {
         this.logic         = new GameLogic(firebase, lobbyCode);
 
         fetchWord();
+        view.setTime(60);
         subscribeToRemoteStrokes();
-        startTimer();
+
+        firebase.subscribeToGuesses(lobbyCode, this::endRound);
+
+        startRoundTimer(60);
+    }
+
+    private void startRoundTimer(int seconds) {
+        roundTimer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
+            @Override public void onTick(int secsLeft) {
+                Gdx.app.postRunnable(() -> view.setTime(secsLeft));
+            }
+            @Override public void onTimeUp() {
+                endRound();
+            }
+        });
+        roundTimer.start();
+    }
+
+    private void endRound() {
+        if (roundTimer != null && roundTimer.isRunning()) {
+            roundTimer.stop();
+        }
+        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
+        if (game.getPlayerName().equals(currentDrawer)) {
+            // pick next drawer (round-robin)
+            List<String> names = logic.getPlayers().stream()
+                .map(p -> p.getName()).collect(Collectors.toList());
+            int idx = names.indexOf(currentDrawer);
+            String next = names.get((idx + 1) % names.size());
+            firebase.startGame(lobbyCode, next);
+        }
     }
 
     private void fetchWord() {
@@ -65,43 +96,5 @@ public class DrawingController {
                 view.addRemoteStroke(points, Color.valueOf(colorHex));
             })
         );
-    }
-
-    private void startTimer() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override public void run() {
-                Gdx.app.postRunnable(() -> {
-                    secondsLeft--;
-                    view.setTime(secondsLeft);
-
-                    if (secondsLeft <= 0) {
-                        timer.cancel();
-
-                        // 1) Move everyone to the leaderboard screen
-                        game.setScreen(new LeaderboardView());
-
-                        // 2) Only the drawer schedules the next turn
-                        if (game.getPlayerName().equals(currentDrawer)) {
-                            // pull fresh list of player names
-                            List<String> names = logic.getPlayers().stream()
-                                .map(p -> p.getName())
-                                .collect(Collectors.toList());
-
-                            int idx = names.indexOf(currentDrawer);
-                            // next in round‑robin
-                            String nextDrawer = names.get((idx + 1) % names.size());
-
-                            // kick off the next “choose word” phase everywhere
-                            firebase.startGame(lobbyCode, nextDrawer);
-                        }
-                    }
-                });
-            }
-        }, 1_000, 1_000);
-    }
-
-    public void stopTimer() {
-        if (timer != null) timer.cancel();
     }
 }

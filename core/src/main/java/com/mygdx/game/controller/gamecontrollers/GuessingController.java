@@ -11,63 +11,64 @@ import com.mygdx.game.view.gameviews.LeaderboardView;
 
 public class GuessingController {
     private final doodleMain game;
-    private final GameLogic gameLogic;
+    private final GameLogic logic;
     private final GuessingView guessingView;
     private final String lobbyCode;
     private final FirebaseInterface firebase;
     private RoundTimer timer;
 
     public GuessingController(doodleMain game,
-                              GameLogic gameLogic,
+                              GameLogic logic,
                               GuessingView guessingView,
                               String lobbyCode) {
-        this.game         = game;
-        this.gameLogic    = gameLogic;
+        this.game = game;
+        this.logic = logic;
         this.guessingView = guessingView;
-        this.lobbyCode    = lobbyCode;
-        this.firebase     = game.getFirebaseService();
+        this.lobbyCode = lobbyCode;
+        this.firebase = game.getFirebaseService();
 
-        // Subscribe to live drawing strokes
+        // show masked word
+        guessingView.displayMaskedWord(logic.getMaskedWord());
+
         firebase.subscribeToStrokes(lobbyCode, (strokeId, points, colorHex) ->
             Gdx.app.postRunnable(() -> guessingView.addRemoteStroke(points, Color.valueOf(colorHex)))
         );
 
-        // Fetch the chosen word once and display masked
-        firebase.getChosenWord(lobbyCode, new FirebaseInterface.WordCallback() {
-            @Override public void onSuccess(String word) {
-                gameLogic.setCurrentWord(word);
-                String masked = gameLogic.getMaskedWord();
-                Gdx.app.postRunnable(() -> guessingView.displayMaskedWord(masked));
-            }
-            @Override public void onFailure(Exception e) {
-                // handle error if needed
+        // subscribe to guess completions
+        firebase.subscribeToGuesses(lobbyCode, new FirebaseInterface.GuessesCallback() {
+            @Override
+            public void onAllGuessed() {
+                endRound();
             }
         });
 
-        // Start the guess timer; transition only when time's up
-        startGuessTimer(60);
+        // start countdown
+        startTimer(60);
     }
 
-    private void startGuessTimer(int seconds) {
+    private void startTimer(int seconds) {
         timer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
             @Override public void onTick(int secsLeft) {
-                // optionally update a timer UI if you add one
+                Gdx.app.postRunnable(() -> guessingView.setTime(secsLeft));
             }
             @Override public void onTimeUp() {
-                // move everyone to the leaderboard
-                Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
+                endRound();
             }
         });
         timer.start();
     }
 
-    /** Called when player submits a guess */
     public void onGuessSubmitted(String guess) {
-        if (gameLogic.isCorrectGuess(guess)) {
+        if (logic.isCorrectGuess(guess)) {
+            firebase.recordGuess(lobbyCode, game.getPlayerName());
             Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
-            // guessers simply wait here; drawing controller will schedule next round
         } else {
             Gdx.app.postRunnable(() -> guessingView.showIncorrectFeedback());
         }
+    }
+
+    private void endRound() {
+        if (timer != null && timer.isRunning()) timer.stop();
+        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
     }
 }

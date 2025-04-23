@@ -25,6 +25,7 @@ public class GuessingView implements Screen {
     private final Skin skin;
 
     private Label maskedWordLabel;
+    private Label timerLabel;    // <--- new timer label
     private TextField guessField;
     private TextButton submitBtn;
     private Label feedbackLabel;
@@ -43,35 +44,42 @@ public class GuessingView implements Screen {
     private void createUI() {
         Table table = new Table();
         table.setFillParent(true);
-        table.top().padTop(Gdx.graphics.getHeight() * 0.1f);
+        table.top().padTop(Gdx.graphics.getHeight() * 0.05f);
         stage.addActor(table);
 
         maskedWordLabel = new Label("", skin);
         maskedWordLabel.setFontScale(1.5f);
         maskedWordLabel.setAlignment(Align.center);
+        table.add(maskedWordLabel)
+            .width(Gdx.graphics.getWidth() * 0.8f)
+            .padBottom(10f).row();
+
+        timerLabel = new Label("60", skin);    // default 60
+        timerLabel.setFontScale(1.2f);
+        timerLabel.setColor(Color.RED);
+        timerLabel.setAlignment(Align.center);
+        table.add(timerLabel)
+            .width(Gdx.graphics.getWidth() * 0.8f)
+            .padBottom(20f).row();
 
         guessField = new TextField("", skin);
         guessField.setMessageText("Your guess…");
-
-        submitBtn = new TextButton("Submit", skin);
-        submitBtn.getLabel().setFontScale(1.2f);
-
-        feedbackLabel = new Label("", skin);
-        feedbackLabel.setFontScale(1.2f);
-        feedbackLabel.setAlignment(Align.center);
-
-        table.add(maskedWordLabel)
-            .width(Gdx.graphics.getWidth() * 0.8f)
-            .padBottom(20f).row();
         table.add(guessField)
             .width(Gdx.graphics.getWidth() * 0.6f)
             .padBottom(20f).row();
+
+        submitBtn = new TextButton("Submit", skin);
+        submitBtn.getLabel().setFontScale(1.2f);
         table.add(submitBtn)
             .width(Gdx.graphics.getWidth() * 0.4f)
             .height(Gdx.graphics.getHeight() * 0.1f)
             .padBottom(20f).row();
+
+        feedbackLabel = new Label("", skin);
+        feedbackLabel.setFontScale(1.2f);
+        feedbackLabel.setAlignment(Align.center);
         table.add(feedbackLabel)
-            .width(Gdx.graphics.getWidth() * 0.8f);
+            .width(Gdx.graphics.getWidth() * 0.8f).row();
     }
 
     public void setController(GuessingController controller) {
@@ -85,23 +93,21 @@ public class GuessingView implements Screen {
     }
 
     public void displayMaskedWord(String masked) {
-        if (maskedWordLabel != null) {
-            maskedWordLabel.setText(masked);
-        }
+        maskedWordLabel.setText(masked);
+    }
+
+    public void setTime(int seconds) {  // <--- update timer label
+        timerLabel.setText(String.valueOf(seconds));
     }
 
     public void showCorrectFeedback() {
-        if (feedbackLabel != null) {
-            feedbackLabel.setText("Correct!");
-            feedbackLabel.setColor(Color.GREEN);
-        }
+        feedbackLabel.setText("Correct!");
+        feedbackLabel.setColor(Color.GREEN);
     }
 
     public void showIncorrectFeedback() {
-        if (feedbackLabel != null) {
-            feedbackLabel.setText("Try again…");
-            feedbackLabel.setColor(Color.RED);
-        }
+        feedbackLabel.setText("Try again…");
+        feedbackLabel.setColor(Color.RED);
     }
 
     public void addRemoteStroke(List<Vector2> pts, Color color) {
@@ -114,48 +120,35 @@ public class GuessingView implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Stroke s : strokes) {
-            s.render(shapeRenderer);
-        }
+        for (Stroke s : strokes) s.render(shapeRenderer);
         shapeRenderer.end();
 
         stage.act(delta);
         stage.draw();
     }
 
-    @Override public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
+    @Override public void resize(int w,int h) { stage.getViewport().update(w,h,true);}
     @Override public void show() {}
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void dispose() {
-        stage.dispose();
-        skin.dispose();
-        shapeRenderer.dispose();
-    }
+    @Override public void dispose() { stage.dispose(); skin.dispose(); shapeRenderer.dispose(); }
 
     private static class Stroke {
         private final List<Vector2> points = new ArrayList<>();
         private final Color color;
-        public Stroke(Color color) {
-            this.color = new Color(color);
-        }
-        public void addPoint(Vector2 p) {
-            points.add(p);
-        }
-        public void render(ShapeRenderer renderer) {
-            renderer.setColor(color);
-            for (int i = 1; i < points.size(); i++) {
-                Vector2 p1 = points.get(i - 1);
-                Vector2 p2 = points.get(i);
-                renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
+        public Stroke(Color color) { this.color = new Color(color); }
+        public void addPoint(Vector2 p) { points.add(p); }
+        public void render(ShapeRenderer r) {
+            r.setColor(color);
+            for (int i=1; i<points.size(); i++) {
+                Vector2 p1 = points.get(i-1), p2 = points.get(i);
+                r.rectLine(p1.x,p1.y,p2.x,p2.y,10f);
             }
         }
     }

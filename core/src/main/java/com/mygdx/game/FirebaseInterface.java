@@ -11,6 +11,12 @@ public interface FirebaseInterface {
     void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback);
     void sendStroke(String lobbyCode, String strokeId, List<Vector2> points, String colorHex);
     void subscribeToStrokes(String lobbyCode, StrokeCallback cb);
+    void recordGuess(String lobbyCode, String playerName);
+    void subscribeToGuesses(String lobbyCode, GuessesCallback callback);
+
+    interface GuessesCallback {
+        void onAllGuessed();
+    }
 
     // Lobby‐management callbacks
     interface LobbyCallback {
