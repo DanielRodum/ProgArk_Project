@@ -1,53 +1,74 @@
 package com.mygdx.game.controller.gamecontrollers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
+import com.mygdx.game.utils.RoundTimer;
 import com.mygdx.game.view.gameviews.GuessingView;
+import com.mygdx.game.view.gameviews.LeaderboardView;
 
 public class GuessingController {
     private final doodleMain game;
-    private final GameLogic gameLogic;
+    private final GameLogic logic;
     private final GuessingView guessingView;
     private final String lobbyCode;
     private final FirebaseInterface firebase;
+    private RoundTimer timer;
 
     public GuessingController(doodleMain game,
-                              GameLogic gameLogic,
+                              GameLogic logic,
                               GuessingView guessingView,
                               String lobbyCode) {
-        this.game         = game;
-        this.gameLogic    = gameLogic;
+        this.game = game;
+        this.logic = logic;
         this.guessingView = guessingView;
-        this.lobbyCode    = lobbyCode;
-        this.firebase     = game.getFirebaseService();
-        subscribeToWord();
-    }
+        this.lobbyCode = lobbyCode;
+        this.firebase = game.getFirebaseService();
 
-    /** Hører etter tegnerens valgte ord */
-    private void subscribeToWord() {
-        firebase.setupLobbyListener(lobbyCode, new FirebaseInterface.LobbyStateCallback() {
-            @Override public void onPlayerJoined(String n)       {}
-            @Override public void onPlayerLeft(String n)         {}
-            @Override public void onGameStarted(String d)        {}
-            @Override public void onWordChosen(String word) {
-                gameLogic.setCurrentWord(word);
-                String masked = gameLogic.getMaskedWord();
-                Gdx.app.postRunnable(() -> guessingView.displayMaskedWord(masked));
+        // show masked word
+        guessingView.displayMaskedWord(logic.getMaskedWord());
+
+        firebase.subscribeToStrokes(lobbyCode, (strokeId, points, colorHex) ->
+            Gdx.app.postRunnable(() -> guessingView.addRemoteStroke(points, Color.valueOf(colorHex)))
+        );
+
+        // subscribe to guess completions
+        firebase.subscribeToGuesses(lobbyCode, new FirebaseInterface.GuessesCallback() {
+            @Override
+            public void onAllGuessed() {
+                endRound();
             }
-            @Override public void onLobbyClosed()                {}
-            @Override public void onError(String message)        {}
         });
+
+        // start countdown
+        startTimer(60);
     }
 
-    /** Kalles når spiller trykker på "Guess" i GuessingView */
-    public void onGuessSubmitted(String guess) {
-        if (guess == null || guess.trim().isEmpty()) return;
-        boolean correct = guess.equalsIgnoreCase(gameLogic.getCurrentWord());
-        Gdx.app.postRunnable(() -> {
-            if (correct) guessingView.showCorrectFeedback();
-            else         guessingView.showIncorrectFeedback();
+    private void startTimer(int seconds) {
+        timer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
+            @Override public void onTick(int secsLeft) {
+                Gdx.app.postRunnable(() -> guessingView.setTime(secsLeft));
+            }
+            @Override public void onTimeUp() {
+                endRound();
+            }
         });
+        timer.start();
+    }
+
+    public void onGuessSubmitted(String guess) {
+        if (logic.isCorrectGuess(guess)) {
+            firebase.recordGuess(lobbyCode, game.getPlayerName());
+            Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
+        } else {
+            Gdx.app.postRunnable(() -> guessingView.showIncorrectFeedback());
+        }
+    }
+
+    private void endRound() {
+        if (timer != null && timer.isRunning()) timer.stop();
+        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
     }
 }

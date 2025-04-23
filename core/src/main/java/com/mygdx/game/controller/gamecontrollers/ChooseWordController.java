@@ -35,28 +35,15 @@ public class ChooseWordController {
         });
     }
 
-    /** Called when the drawer taps one of the three options.
-     Pushes the choice into Firebase under "currentWord" */
+    /** Called when the drawer taps one of the three options. */
     public void selectWord(String word) {
-        firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback(){
-            @Override
-            public void onSuccess(String msg) {
-                firebase.startDrawingRound(lobbyCode, word, game.getPlayerName(), new FirebaseInterface.LobbyCallback(){
-                    @Override
-                    public void onSuccess(String code){
-                        Gdx.app.postRunnable(()->{
-                            game.setScreen(new DrawingView(game, lobbyCode));
-                        });
-                    }
-                    @Override
-                    public void onFailure(String error){
-                        Gdx.app.postRunnable(()->view.showError("Failed to start round: "+error));
-                    }
-                });
+        firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback() {
+            @Override public void onSuccess(String msg) {
+                // directly transition drawer to the drawing screen
+                Gdx.app.postRunnable(() -> game.setScreen(new DrawingView(game, lobbyCode)));
             }
-            @Override
-            public void onFailure(String err) {
-                Gdx.app.postRunnable(()->view.showError("Could not save word: "+err));
+            @Override public void onFailure(String err) {
+                Gdx.app.postRunnable(() -> view.showError("Could not save word: " + err));
             }
         });
     }
