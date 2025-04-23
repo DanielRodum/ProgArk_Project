@@ -2,8 +2,12 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.services.PlatformService;
 import com.mygdx.game.view.MainMenuView;
+
+import java.util.Collections;
+import java.util.List;
 
 /** Core game class. */
 public class doodleMain extends Game {
@@ -28,34 +32,81 @@ public class doodleMain extends Game {
         if (firebaseService == null) {
             // stub to avoid NPE on desktop
             firebaseService = new FirebaseInterface() {
-                @Override public void fetchWords(FirestoreCallback cb)     { cb.onSuccess(java.util.List.of()); }
-
                 @Override
-                public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
-
+                public void fetchWords(FirestoreCallback cb) {
+                    cb.onSuccess(Collections.<String>emptyList());
                 }
 
                 @Override
-                public void startDrawingRound(String l, String w, LobbyCallback cb) { cb.onSuccess(l); }
+                public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
+                    callback.onSuccess(lobbyCode);
+                }
+
+                @Override
+                public void startDrawingRound(String l, String w, LobbyCallback cb) {
+                    cb.onSuccess(l);
+                }
 
                 @Override
                 public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
-
+                    // no‐op
                 }
 
                 @Override
                 public void getChosenWord(String lobbyCode, WordCallback callback) {
-                    callback.onSuccess(lobbyCode);
+                    callback.onSuccess("");
                 }
 
-                @Override public void createLobby(String h, LobbyCallback cb) { cb.onFailure("Offline"); }
-                @Override public void joinLobby(String c, String p, LobbyCallback cb) { cb.onFailure("Offline"); }
-                @Override public void startGame(String l, String d)        {}
-                @Override public void leaveLobby(String l, String p)       {}
-                @Override public void setupLobbyListener(String l, LobbyStateCallback c) {}
-                @Override public void initializeDatabaseStructure(Runnable r){ r.run(); }
+                @Override
+                public void createLobby(String h, LobbyCallback cb) {
+                    cb.onFailure("Offline");
+                }
+
+                @Override
+                public void joinLobby(String c, String p, LobbyCallback cb) {
+                    cb.onFailure("Offline");
+                }
+
+                @Override
+                public void startGame(String l, String d) {
+                    // no‐op
+                }
+
+                @Override
+                public void leaveLobby(String l, String p) {
+                    // no‐op
+                }
+
+                @Override
+                public void setupLobbyListener(String l, LobbyStateCallback c) {
+                    // no‐op
+                }
+
+                @Override
+                public void initializeDatabaseStructure(Runnable onComplete) {
+                    onComplete.run();
+                }
+
+                @Override
+                public void fetchPlayers(String lobbyCode, PlayersCallback cb) {
+                    cb.onSuccess(Collections.<String>emptyList());
+                }
+
+                @Override
+                public void sendStroke(String lobbyCode,
+                                       String strokeId,
+                                       List<Vector2> points,
+                                       String colorHex) {
+                    // no‐op
+                }
+
+                @Override
+                public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) {
+                    // no‐op
+                }
             };
         }
+
         setScreen(new MainMenuView(this));
     }
 
@@ -85,48 +136,34 @@ public class doodleMain extends Game {
         super.dispose();
     }
 
-    /** A simple no‑op stub so desktop runs without Firebase. */
     private static class NullFirebaseManager implements FirebaseInterface {
-        @Override public void fetchWords(FirestoreCallback cb) {
-            cb.onSuccess(java.util.List.of("Cat", "Dog", "House"));
+        @Override
+        public void fetchWords(FirestoreCallback cb) {
+            cb.onSuccess(Collections.<String>emptyList());
         }
-
         @Override
         public void startDrawingRound(String lobbyCode, String word, String drawer, LobbyCallback callback) {
-
+            callback.onSuccess(lobbyCode);
         }
-
-        @Override public void startDrawingRound(String l, String w, LobbyCallback cb) {
+        @Override
+        public void startDrawingRound(String l, String w, LobbyCallback cb) {
             cb.onSuccess(l);
         }
+        @Override public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) { }
+        @Override public void getChosenWord(String lobbyCode, WordCallback callback) { callback.onSuccess(""); }
 
-        @Override public void createLobby(String h, LobbyCallback cb) {
-            cb.onFailure("Offline");
+        @Override public void createLobby(String h, LobbyCallback cb) { cb.onFailure("Offline"); }
+        @Override public void joinLobby(String c, String p, LobbyCallback cb) { cb.onFailure("Offline"); }
+        @Override public void startGame(String l, String d) { }
+        @Override public void leaveLobby(String l, String p) { }
+        @Override public void setupLobbyListener(String l, LobbyStateCallback c) { }
+        @Override public void initializeDatabaseStructure(Runnable rc) { rc.run(); }
+
+        // Java 8 replacements for the new methods:
+        @Override public void fetchPlayers(String lobbyCode, PlayersCallback cb) {
+            cb.onSuccess(Collections.<String>emptyList());
         }
-
-        @Override public void joinLobby(String c, String p, LobbyCallback cb) {
-            cb.onFailure("Offline");
-        }
-
-        @Override public void startGame(String l, String d) {}
-
-        @Override public void leaveLobby(String l, String p) {}
-
-        @Override public void setupLobbyListener(String l, LobbyStateCallback c) {}
-
-        @Override public void initializeDatabaseStructure(Runnable rc) {
-            rc.run();
-        }
-
-        @Override
-        public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
-            callback.onFailure("Offline");
-        }
-
-        @Override
-        public void getChosenWord(String lobbyCode, WordCallback callback) {
-            callback.onFailure(new Exception("Offline mode — no word available"));
-        }
+        @Override public void sendStroke(String lobbyCode, String strokeId, List<Vector2> points, String colorHex) { }
+        @Override public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) { }
     }
-
 }
