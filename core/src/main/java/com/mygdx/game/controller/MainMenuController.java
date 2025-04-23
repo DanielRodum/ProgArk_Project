@@ -7,6 +7,8 @@ import com.mygdx.game.view.MainMenuView;
 import com.mygdx.game.view.TutorialView;
 import com.mygdx.game.view.WaitingView;
 
+import java.util.Locale;
+
 public class MainMenuController {
     private final doodleMain game;
     private final MainMenuView view;
@@ -58,14 +60,18 @@ public class MainMenuController {
             view.showError("Please enter a valid lobby code");
             return;
         }
+        String code = lobbyCode.trim().toUpperCase(Locale.US);
+
         game.setPlayerName(playerName);
-        game.getFirebaseService().joinLobby(lobbyCode, playerName, new FirebaseInterface.LobbyCallback() {
-            @Override public void onSuccess(String code) {
+        game.getFirebaseService().joinLobby(code, playerName, new FirebaseInterface.LobbyCallback() {
+            @Override
+            public void onSuccess(String code) {
                 Gdx.app.postRunnable(() ->
                     game.setScreen(new WaitingView(game, code, false))
                 );
             }
-            @Override public void onFailure(String error) {
+            @Override
+            public void onFailure(String error) {
                 Gdx.app.postRunnable(() ->
                     view.showError("Join failed: " + error)
                 );
