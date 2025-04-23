@@ -1,15 +1,18 @@
 package com.mygdx.game.view.gameviews;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,18 +47,10 @@ public class LeaderboardView implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        // Add test player scores (Replace with player class implementation)
-        List<PlayerScore> testScores = new ArrayList<>();
-        testScores.add(new PlayerScore("Alice", 1500));
-        testScores.add(new PlayerScore("Bob", 1200));
-        testScores.add(new PlayerScore("Charlie", 1800));
-        testScores.add(new PlayerScore("David", 1100));
-        testScores.add(new PlayerScore("Eve", 1400));
-
-        updateLeaderboard(testScores);
+        updateLeaderboard(new ArrayList<>());
     }
 
-    public void updateLeaderboard(List<PlayerScore> scores) {
+    public void updateLeaderboard(List<Player> players) {
         table.clear();
 
         Label title = new Label("Leaderboard", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -64,10 +59,9 @@ public class LeaderboardView implements Screen {
         table.add(title).colspan(2).padBottom(40);
         table.row();
 
-        List<PlayerScore> mutableScores = new ArrayList<>(scores);
-        mutableScores.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+        players.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
 
-        for (PlayerScore player : mutableScores) {
+        for (Player player : players) {
             Label playerLabel = new Label(player.getName(), skin);
             Label scoreLabel = new Label(String.valueOf(player.getScore()), skin);
 
@@ -93,30 +87,9 @@ public class LeaderboardView implements Screen {
         skin.dispose();
     }
 
-    // Other unused Screen methods (Might be useful later)
     @Override public void resize(int width, int height) {}
     @Override public void show() {}
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
-
-    // Mock PlayerScore class
-    // Replace logic with Player class when that is implemented
-    public static class PlayerScore {
-        private final String name;
-        private final int score;
-
-        public PlayerScore(String name, int score) {
-            this.name = name;
-            this.score = score;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getScore() {
-            return score;
-        }
-    }
 }

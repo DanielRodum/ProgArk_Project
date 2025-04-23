@@ -3,6 +3,7 @@ package com.mygdx.game.controller.gamecontrollers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
@@ -11,8 +12,6 @@ import com.mygdx.game.view.gameviews.DrawingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class DrawingController {
@@ -57,14 +56,19 @@ public class DrawingController {
         if (roundTimer != null && roundTimer.isRunning()) {
             roundTimer.stop();
         }
-        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
+        Gdx.app.postRunnable(() -> new LeaderboardController(game, new LeaderboardView(), logic, lobbyCode));
         if (game.getPlayerName().equals(currentDrawer)) {
             // pick next drawer (round-robin)
             List<String> names = logic.getPlayers().stream()
                 .map(p -> p.getName()).collect(Collectors.toList());
             int idx = names.indexOf(currentDrawer);
             String next = names.get((idx + 1) % names.size());
-            firebase.startGame(lobbyCode, next);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    firebase.startGame(lobbyCode, next);
+                }
+            }, 5);
         }
     }
 

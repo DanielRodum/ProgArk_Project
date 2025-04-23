@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
+import com.mygdx.game.model.Player;
 import com.mygdx.game.utils.RoundTimer;
 import com.mygdx.game.view.gameviews.GuessingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
@@ -61,6 +62,17 @@ public class GuessingController {
     public void onGuessSubmitted(String guess) {
         if (logic.isCorrectGuess(guess)) {
             firebase.recordGuess(lobbyCode, game.getPlayerName());
+            
+            int timeLeft = timer != null ? timer.getTimeRemaining() : 0;
+            int score = Math.max(0, 100 - timeLeft); 
+
+            for (Player player : logic.getPlayers()) {
+                if (player.getName().equals(game.getPlayerName())) {
+                    player.addScore(score);
+                    break;
+                }
+            }
+
             Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
         } else {
             Gdx.app.postRunnable(() -> guessingView.showIncorrectFeedback());
@@ -69,6 +81,6 @@ public class GuessingController {
 
     private void endRound() {
         if (timer != null && timer.isRunning()) timer.stop();
-        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
+        Gdx.app.postRunnable(() -> new LeaderboardController(game, new LeaderboardView(), logic, lobbyCode));
     }
 }
