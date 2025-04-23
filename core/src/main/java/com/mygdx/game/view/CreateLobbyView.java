@@ -105,7 +105,7 @@ public class CreateLobbyView implements Screen {
     }
 
     @Override public void render(float delta) {
-        Gdx.gl.glClearColor(0.05f,0.05f,0.05f,1f);
+        Gdx.gl.glClearColor(1f,0.5f,0.5f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();

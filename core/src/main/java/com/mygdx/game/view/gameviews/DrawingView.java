@@ -62,11 +62,11 @@ public class DrawingView implements Screen {
         uiStage.addActor(table);
 
         wordLabel = new Label("Word: loading...", skin);
-        wordLabel.setColor(Color.WHITE);
+        wordLabel.setColor(Color.CHARTREUSE);
         wordLabel.setFontScale(2f);
 
         timerLabel = new Label("30", skin);
-        timerLabel.setColor(Color.YELLOW);
+        timerLabel.setColor(Color.CHARTREUSE);
         timerLabel.setFontScale(2f);
 
         table.add(wordLabel).expandX().left().padLeft(20);

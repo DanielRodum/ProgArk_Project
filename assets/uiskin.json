@@ -59,19 +59,67 @@
       b: 0
       a: 1
     }
+    light_pink: {
+      r: 1
+      g: 0.5
+      b: 0.5
+      a: 1
+    }
+    teal: {
+      r: 0.25
+      g: 1
+      b: 1
+      a: 1
+    }
+    peach: {
+      r: 1
+      g: 0.7
+      b: 0.5
+      a: 1
+    }
+    pink: {
+      r: 1
+      g: 0.6
+      b: 0.6
+      a: 1
+    }
+    rose: {
+      r: 0.8
+      g: 0.4
+      b: 0.4
+      a: 1
+    }
+    soft_gray: {
+      r: 0.8
+      g: 0.8
+      b: 0.8
+      a: 1
+    }
+    charcoal: {
+      r: 0.2
+      g: 0.2
+      b: 0.2
+      a: 1
+    }
+    tint: {
+      r: 1
+      g: 0.6
+      b: 0.6
+      a: 1
+    }
   }
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
     button-c: {
       name: button
-      color: color
+      color: pink
     }
     button-close-c: {
       name: button-close
-      color: color
+      color: white
     }
     button-pressed-c: {
       name: button-pressed
-      color: color
+      color: white
     }
     button-h: {
       name: button
@@ -79,99 +127,99 @@
     }
     checkbox-c: {
       name: checkbox
-      color: color
+      color: white
     }
     checkbox-pressed-c: {
       name: checkbox-pressed
-      color: color
+      color: white
     }
     list-c: {
       name: list
-      color: color
+      color: white
     }
     radio-pressed-c: {
       name: radio-pressed
-      color: color
+      color: white
     }
     scrollbar-c: {
       name: scrollbar
-      color: color
+      color: white
     }
     scrollbar-android-c: {
       name: scrollbar-android
-      color: color
+      color: white
     }
     select-box-c: {
       name: select-box
-      color: color
+      color: white
     }
     select-box-pressed-c: {
       name: select-box-pressed
-      color: color
+      color: white
     }
     slider-horizontal-c: {
       name: slider-horizontal
-      color: color
+      color: white
     }
     slider-knob-c: {
       name: slider-knob
-      color: color
+      color: white
     }
     slider-vertical-c: {
       name: slider-vertical
-      color: color
+      color: white
     }
     splitpane-horizontal-c: {
       name: splitpane-horizontal
-      color: color
+      color: white
     }
     splitpane-vertical-c: {
       name: splitpane-vertical
-      color: color
+      color: white
     }
     textfield-c: {
       name: textfield
-      color: color
+      color: white
     }
     tooltip-c: {
       name: tooltip
-      color: color
+      color: white
     }
     touchpad-c: {
       name: touchpad
-      color: color
+      color: white
     }
     touchpad-knob-c: {
       name: touchpad-knob
-      color: color
+      color: white
     }
     tree-minus-c: {
       name: tree-minus
-      color: color
+      color: white
     }
     tree-plus-c: {
       name: tree-plus
-      color: color
+      color: white
     }
     color: {
       name: white
-      color: color
+      color: white
     }
     window-c: {
       name: window
-      color: color
+      color: white
     }
     selection: {
       name: white
-      color: selection
+      color: teal
     }
     slider-horizontal-s: {
       name: slider-horizontal
-      color: selection
+      color: teal
     }
     slider-vertical-s: {
       name: slider-vertical
-      color: selection
+      color: teal
     }
     select-box-pressed-h: {
       name: select-box-pressed
@@ -187,11 +235,11 @@
     }
     slider-horizontal-p: {
       name: slider-horizontal
-      color: pressed
+      color: rose
     }
     slider-vertical-p: {
       name: slider-vertical
-      color: pressed
+      color: rose
     }
     black: {
       name: white
@@ -199,7 +247,7 @@
     }
     button-close-p: {
       name: button-close
-      color: pressed
+      color: rose
     }
     button-close-h: {
       name: button-close
@@ -207,19 +255,19 @@
     }
     button-close-s: {
       name: button-close
-      color: selection
+      color: teal
     }
     window-w: {
       name: window
-      color: window
+      color: peach
     }
     button-p: {
       name: button
-      color: pressed
+      color: rose
     }
     slider-fancy-p: {
       name: slider-fancy
-      color: pressed
+      color: rose
     }
     checkbox-h: {
       name: checkbox
@@ -231,11 +279,11 @@
     }
     checkbox-p: {
       name: checkbox
-      color: pressed
+      color: rose
     }
     checkbox-pressed-p: {
       name: checkbox-pressed
-      color: pressed
+      color: rose
     }
     radio-pressed-h: {
       name: radio-pressed
@@ -243,7 +291,7 @@
     }
     radio-pressed-p: {
       name: radio-pressed
-      color: pressed
+      color: rose
     }
   }
   com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
@@ -263,15 +311,15 @@
       checkboxOn: checkbox-pressed-c
       checkboxOff: checkbox-c
       font: button
-      fontColor: color
-      downFontColor: pressed
+      fontColor: white
+      downFontColor: rose
       overFontColor: highlight
     }
     radio: {
       checkboxOn: radio-pressed-c
       checkboxOff: checkbox-c
       font: button
-      fontColor: color
+      fontColor: white
     }
   }
   com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
@@ -298,8 +346,8 @@
       imageChecked: checkbox-pressed-c
       imageCheckedOver: checkbox-pressed-h
       font: button
-      fontColor: color
-      downFontColor: pressed
+      fontColor: white
+      downFontColor: rose
       overFontColor: highlight
     }
     radio: {
@@ -309,23 +357,23 @@
       imageChecked: radio-pressed-c
       imageCheckedOver: radio-pressed-h
       font: button
-      fontColor: color
-      downFontColor: pressed
+      fontColor: white
+      downFontColor: rose
       overFontColor: highlight
     }
   }
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
     default: {
       font: font
-      fontColor: color
+      fontColor: white
     }
     button: {
       font: button
-      fontColor: color
+      fontColor: white
     }
     title: {
       font: title
-      fontColor: color
+      fontColor: white
     }
   }
   com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -364,7 +412,7 @@
   com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
     default: {
       font: font
-      fontColor: white
+      fontColor: charcoal
       background: select-box-c
       scrollStyle: default
       listStyle: default
@@ -417,7 +465,7 @@
   com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
     default: {
       font: font
-      fontColor: white
+      fontColor: charcoal
       background: textfield-c
       cursor: white
       selection: selection
