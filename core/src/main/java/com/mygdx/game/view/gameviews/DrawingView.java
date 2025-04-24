@@ -24,6 +24,7 @@ import com.mygdx.game.doodleMain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 public class DrawingView implements Screen {
@@ -114,30 +115,43 @@ public class DrawingView implements Screen {
         table.add(btn).size(size).pad(10);
     }
 
-    private InputProcessor createDrawingInputProcessor(){
-        return new InputAdapter(){
+    private InputProcessor createDrawingInputProcessor() {
+        return new InputAdapter() {
             private Stroke currentStroke = null;
+            private String currentStrokeId = null;
+
             @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button){
-                Vector2 touch = viewport.unproject(new Vector2(screenX, screenY));
+            public boolean touchDown(int sx, int sy, int ptr, int button) {
+                Vector2 p = viewport.unproject(new Vector2(sx, sy));
                 currentStroke = new Stroke(currentColor);
-                currentStroke.addPoint(touch);
+                currentStrokeId = UUID.randomUUID().toString();
+                currentStroke.addPoint(p);
                 strokes.add(currentStroke);
+                // send initial stroke point to guessers
+                controller.onLocalStrokeCompleted(currentStrokeId,
+                    new ArrayList<>(currentStroke.getPoints()),
+                    currentStroke.getColor());
                 return true;
             }
 
             @Override
-            public boolean touchDragged(int screenX, int screenY, int pointer){
-                if (currentStroke != null){
-                    Vector2 touch = viewport.unproject(new Vector2(screenX, screenY));
-                    currentStroke.addPoint(touch);
+            public boolean touchDragged(int sx, int sy, int ptr) {
+                if (currentStroke != null) {
+                    Vector2 p = viewport.unproject(new Vector2(sx, sy));
+                    currentStroke.addPoint(p);
+                    // send updated stroke data for real-time rendering
+                    controller.onLocalStrokeCompleted(currentStrokeId,
+                        new ArrayList<>(currentStroke.getPoints()),
+                        currentStroke.getColor());
                 }
                 return true;
             }
 
             @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button){
+            public boolean touchUp(int sx, int sy, int ptr, int button) {
+                // clear stroke state on lift
                 currentStroke = null;
+                currentStrokeId = null;
                 return true;
             }
         };
@@ -148,6 +162,44 @@ public class DrawingView implements Screen {
             wordLabel.setText("Word: "+word);
         }
     }
+
+    private static class Stroke{
+        private final List<Vector2> points = new ArrayList<>();
+        private final Color color;
+        public Stroke(Color color){
+            this.color = new Color(color);
+        }
+
+        public void addPoint(Vector2 point){
+            points.add(point);
+        }
+
+        public void render(ShapeRenderer renderer){
+            renderer.setColor(color);
+            for (int i=1; i<points.size(); i++){
+                Vector2 p1 = points.get(i-1);
+                Vector2 p2 = points.get(i);
+                renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
+            }
+        }
+
+        public List<Vector2> getPoints() {
+            return points;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+    }
+
+    public void addRemoteStroke(List<Vector2> pts, Color color) {
+        Stroke s = new Stroke(color);
+        for (Vector2 p : pts) {
+            s.addPoint(p);
+        }
+        strokes.add(s);
+    }
+
 
     public void setTime(int seconds){
         timerLabel.setText(String.valueOf(seconds));
@@ -199,31 +251,5 @@ public class DrawingView implements Screen {
         uiStage.dispose();
         shapeRenderer.dispose();
         for (Texture t : colorTextures) t.dispose();
-    }
-
-    //helper class for strokes
-    private static class Stroke{
-        private final List<Vector2> points = new ArrayList<>();
-        private final Color color;
-        public Stroke(Color color){
-            this.color = new Color(color);
-        }
-
-        public void addPoint(Vector2 point){
-            points.add(point);
-        }
-
-        public void render(ShapeRenderer renderer){
-            renderer.setColor(color);
-            for (int i=1; i<points.size(); i++){
-                Vector2 p1 = points.get(i-1);
-                Vector2 p2 = points.get(i);
-                if (color.equals(Color.WHITE)){
-                    renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 50f);
-                } else{
-                    renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 15f);
-                }
-            }
-        }
     }
 }

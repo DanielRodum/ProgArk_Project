@@ -2,6 +2,7 @@ package com.mygdx.game.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -72,16 +73,35 @@ public class WaitingView implements Screen {
         l.setFontScale(1.5f);
         playersTable.add(l).row();
     }
+
     public void removePlayer(String name) {
         playersTable.clear();
+        // you may want to re‑add remaining players from controller/model
     }
+
+    /** Called when it's time to transition to drawing or leaderboard */
     public void onGameStarted(String drawer) {
-        if (drawer.equals(game.getPlayerName())){
+        if (drawer.equals(game.getPlayerName())) {
             game.setScreen(new DrawingView(game, lobbyCode));
         } else {
-            game.setScreen(new LeaderboardView()); 
+            game.setScreen(new LeaderboardView());
         }
     }
+
+    /** Show a one‑line status in place of the lobby code */
+    public void showStatus(String message) {
+        codeLabel.setText(message);
+        codeLabel.setColor(Color.YELLOW);
+    }
+
+    /** Pop up an error dialog */
+    public void showError(String message) {
+        Dialog d = new Dialog("Error", skin);
+        d.text(message);
+        d.button("OK");
+        d.show(stage);
+    }
+    // ──────────────────────────────────────────────────────────────────────────
 
     @Override public void render(float delta) {
         Gdx.gl.glClearColor(0.1f,0.1f,0.1f,1f);
