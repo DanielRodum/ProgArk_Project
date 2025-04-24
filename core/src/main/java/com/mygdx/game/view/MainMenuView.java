@@ -1,6 +1,7 @@
 package com.mygdx.game.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -135,6 +136,11 @@ public class MainMenuView implements Screen {
         d.button("Cancel", false);
 
         d.show(stage);
+
+        //forsøk på noe dynamisk med tastatur, kanskje fortsett siden
+        if (Gdx.input.isPeripheralAvailable(Input.Peripheral.OnscreenKeyboard)){
+            d.setY(screenHeight * 0.55f);
+        }
         for (Actor actor : d.getButtonTable().getChildren()){
             if (actor instanceof TextButton){
                 TextButton button = (TextButton) actor;
@@ -143,7 +149,7 @@ public class MainMenuView implements Screen {
         }
         d.setPosition(
             (screenWidth  - d.getWidth())  / 2,
-            (screenHeight - d.getHeight()) / 2
+            screenHeight * 0.36f
         );
     }
 
