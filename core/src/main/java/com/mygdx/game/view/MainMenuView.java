@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.controller.MainMenuController;
 import com.mygdx.game.doodleMain;
@@ -94,6 +95,12 @@ public class MainMenuView implements Screen {
         final TextField nameField = new TextField("", skin);
         final TextField codeField = new TextField("", skin);
         nameField.getStyle().font.getData().setScale(fontScale);
+        nameField.setTextFieldListener(((textField, c) -> {}));
+        nameField.setCursorPosition(nameField.getText().length());
+        nameField.setAlignment(Align.left);
+        nameField.getStyle().background = skin.getDrawable("textfield-c");
+        //nameField.setCursor("|");
+        nameField.setBlinkTime(0.5f);
         codeField.getStyle().font.getData().setScale(fontScale);
 
         Dialog d = new Dialog(isHost ? "Create Lobby" : "Join Lobby", skin) {
@@ -121,7 +128,6 @@ public class MainMenuView implements Screen {
             content.add(codeField).row();
         }
         d.getTitleLabel().setText("");
-        d.getButtonTable().clear();
         d.setBackground(skin.newDrawable("white", new Color(1f, 0.7f, 0.4f, 1f)));
         d.getButtonTable().pad(pad/4);
         d.getButtonTable().defaults().width(400).height(150).pad(pad/2);
@@ -143,10 +149,42 @@ public class MainMenuView implements Screen {
 
 
     public void showError(String msg) {
-        Dialog d = new Dialog("Error", skin);
-        d.text(msg);
-        d.button("OK");
+        Dialog d = new Dialog("Error!", skin) {};
+
+        d.setBackground(skin.newDrawable("white", new Color(1f, 0.7f, 0.4f, 1f)));
+
+        float dialogWidth = screenWidth * 0.6f;
+        float dialogHeight = screenHeight * 0.35f;
+        d.setSize(dialogWidth, dialogHeight);
+
+        d.getTitleLabel().setFontScale(fontScale * 1.5f);
+        d.getTitleTable().padTop(pad*2).padLeft(pad).left();
+
+        Label messageLabel = new Label(msg, skin);
+        messageLabel.setWrap(true);
+        messageLabel.setAlignment(Align.center);
+        messageLabel.setFontScale(fontScale * 1.1f);
+
+        d.getContentTable().pad(pad/2);
+        d.getContentTable().add().height(pad*1.5f).row();
+        d.getContentTable().add(messageLabel)
+            .width(dialogWidth * 0.8f)
+            .padBottom(pad / 2)
+            .center()
+            .row();
+
+        TextButton okButton = new TextButton("OK", skin);
+        okButton.getLabel().setFontScale(fontScale * 1.2f);
+
+        d.getButtonTable().padBottom(pad / 2);
+        d.button(okButton, true);
+
         d.show(stage);
+
+        d.setPosition(
+            (screenWidth - dialogWidth) / 2f,
+            (screenHeight - dialogHeight) / 2f + pad * 0.25f
+        );
     }
 
     @Override public void resize(int w,int h) {}
