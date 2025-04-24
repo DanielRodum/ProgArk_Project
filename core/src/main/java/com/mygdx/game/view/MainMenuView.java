@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -20,7 +21,7 @@ public class MainMenuView implements Screen {
     private final float screenWidth  = Gdx.graphics.getWidth();
     private final float screenHeight = Gdx.graphics.getHeight();
     private final float btnWidth     = screenWidth * 0.7f;
-    private final float btnHeight    = screenHeight * 0.12f;
+    private final float btnHeight    = screenHeight * 0.08f;
     private final float fontScale    = screenHeight / 720f;
     private final float pad          = screenHeight * 0.05f;
 
@@ -37,7 +38,11 @@ public class MainMenuView implements Screen {
     private void buildUI() {
         Table table = new Table();
         table.setFillParent(true);
-        table.top().padTop(pad);
+        table.top().padTop(pad*2);
+        Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
+        Image logoImage = new Image(logoTexture);
+        float logoWidth = screenWidth * 0.9f;
+        float logoHeight = logoTexture.getHeight() * (logoWidth / logoTexture.getWidth());
         stage.addActor(table);
 
         TextButton createBtn = new TextButton("Create Lobby", skin);
@@ -64,9 +69,17 @@ public class MainMenuView implements Screen {
             }
         });
 
-        table.add(createBtn).width(btnWidth).height(btnHeight).pad(pad).row();
-        table.add(joinBtn)  .width(btnWidth).height(btnHeight).pad(pad).row();
-        table.add(tutorialBtn).width(btnWidth).height(btnHeight).pad(pad);
+        float smallerPad = pad * 0.4f;
+        table.add(logoImage)
+            .width(logoWidth)
+            .height(logoHeight)
+            .padBottom(pad)
+            .center()
+            .row();
+
+        table.add(createBtn).width(btnWidth).height(btnHeight).pad(smallerPad).row();
+        table.add(joinBtn)  .width(btnWidth).height(btnHeight).pad(smallerPad).row();
+        table.add(tutorialBtn).width(btnWidth).height(btnHeight).pad(smallerPad);
     }
 
     @Override
