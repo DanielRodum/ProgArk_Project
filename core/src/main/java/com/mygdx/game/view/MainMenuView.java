@@ -110,23 +110,31 @@ public class MainMenuView implements Screen {
         content.defaults().width(btnWidth).height(btnHeight/2).pad(pad/4);
 
         Label nameLabel = new Label("Enter your name:", skin);
-        nameLabel.setFontScale(fontScale);
+        nameLabel.setFontScale(fontScale+1);
         content.add(nameLabel).row();
         content.add(nameField).row();
 
         if (!isHost) {
             Label codeLabel = new Label("Enter lobby code:", skin);
-            codeLabel.setFontScale(fontScale);
+            codeLabel.setFontScale(fontScale+1);
             content.add(codeLabel).row();
             content.add(codeField).row();
         }
-
+        d.getTitleLabel().setText("");
+        d.getButtonTable().clear();
+        d.setBackground(skin.newDrawable("white", new Color(1f, 0.7f, 0.4f, 1f)));
         d.getButtonTable().pad(pad/4);
-        d.getButtonTable().defaults().width(250).height(150).pad(pad/2);
+        d.getButtonTable().defaults().width(400).height(150).pad(pad/2);
         d.button("OK",  true);
         d.button("Cancel", false);
 
         d.show(stage);
+        for (Actor actor : d.getButtonTable().getChildren()){
+            if (actor instanceof TextButton){
+                TextButton button = (TextButton) actor;
+                button.getLabel().setFontScale(fontScale);
+            }
+        }
         d.setPosition(
             (screenWidth  - d.getWidth())  / 2,
             (screenHeight - d.getHeight()) / 2
