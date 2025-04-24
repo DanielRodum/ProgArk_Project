@@ -122,6 +122,7 @@ public class MainMenuView implements Screen {
         }
 
         d.getButtonTable().pad(pad/4);
+        d.getButtonTable().defaults().width(250).height(150).pad(pad/2);
         d.button("OK",  true);
         d.button("Cancel", false);
 
