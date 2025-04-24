@@ -62,11 +62,11 @@ public class DrawingView implements Screen {
         uiStage.addActor(table);
 
         wordLabel = new Label("Word: loading...", skin);
-        wordLabel.setColor(Color.CHARTREUSE);
+        wordLabel.setColor(Color.BLACK);
         wordLabel.setFontScale(2f);
 
         timerLabel = new Label("30", skin);
-        timerLabel.setColor(Color.CHARTREUSE);
+        timerLabel.setColor(Color.BLACK);
         timerLabel.setFontScale(2f);
 
         table.add(wordLabel).expandX().left().padLeft(20);
@@ -89,9 +89,12 @@ public class DrawingView implements Screen {
 
     private void addColorButton(Table table, Color color){
         int size = 80;
+        int borderWidth = 3;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-        pixmap.setColor(color);
+        pixmap.setColor(Color.BLACK);
         pixmap.fill();
+        pixmap.setColor(color);
+        pixmap.fillRectangle(borderWidth, borderWidth, size-2*borderWidth, size-2 * borderWidth);
 
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
@@ -215,7 +218,11 @@ public class DrawingView implements Screen {
             for (int i=1; i<points.size(); i++){
                 Vector2 p1 = points.get(i-1);
                 Vector2 p2 = points.get(i);
-                renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
+                if (color.equals(Color.WHITE)){
+                    renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 50f);
+                } else{
+                    renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 15f);
+                }
             }
         }
     }
