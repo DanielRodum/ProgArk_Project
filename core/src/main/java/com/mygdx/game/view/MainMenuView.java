@@ -95,14 +95,25 @@ public class MainMenuView implements Screen {
     public void showNameInputDialog(final boolean isHost) {
         final TextField nameField = new TextField("", skin);
         final TextField codeField = new TextField("", skin);
+
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = skin.getFont("font");
+        textFieldStyle.fontColor = Color.BLACK;
+        textFieldStyle.background = skin.newDrawable("white", Color.WHITE); // white input box
+        textFieldStyle.cursor = skin.newDrawable("white", Color.BLACK); // visible cursor
+        textFieldStyle.selection = skin.newDrawable("white", new Color(0.3f, 0.3f, 1f, 0.4f)); // selection color
+
+        nameField.setStyle(textFieldStyle);
         nameField.getStyle().font.getData().setScale(fontScale);
-        nameField.setTextFieldListener(((textField, c) -> {}));
-        nameField.setCursorPosition(nameField.getText().length());
+        nameField.setCursorPosition(0);
         nameField.setAlignment(Align.left);
-        nameField.getStyle().background = skin.getDrawable("textfield-c");
-        //nameField.setCursor("|");
         nameField.setBlinkTime(0.5f);
+
+        codeField.setStyle(textFieldStyle);
         codeField.getStyle().font.getData().setScale(fontScale);
+        codeField.setCursorPosition(0);
+        codeField.setAlignment(Align.left);
+        codeField.setBlinkTime(0.5f);
 
         Dialog d = new Dialog(isHost ? "Create Lobby" : "Join Lobby", skin) {
             @Override protected void result(Object object) {
@@ -137,20 +148,17 @@ public class MainMenuView implements Screen {
 
         d.show(stage);
 
-        //forsøk på noe dynamisk med tastatur, kanskje fortsett siden
-        if (Gdx.input.isPeripheralAvailable(Input.Peripheral.OnscreenKeyboard)){
-            d.setY(screenHeight * 0.55f);
-        }
+        d.setPosition(
+            (screenWidth  - d.getWidth())  / 2,
+            screenHeight * 0.36f
+        );
+
         for (Actor actor : d.getButtonTable().getChildren()){
             if (actor instanceof TextButton){
                 TextButton button = (TextButton) actor;
                 button.getLabel().setFontScale(fontScale);
             }
         }
-        d.setPosition(
-            (screenWidth  - d.getWidth())  / 2,
-            screenHeight * 0.36f
-        );
     }
 
 
