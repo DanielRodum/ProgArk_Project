@@ -88,6 +88,11 @@ public class doodleMain extends Game {
                 }
 
                 @Override
+                public void updatePlayerScore(String lobbyCode, String playerName, int score) {
+
+                }
+
+                @Override
                 public void fetchPlayers(String lobbyCode, PlayersCallback cb) {
                     cb.onSuccess(Collections.<String>emptyList());
                 }

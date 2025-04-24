@@ -92,4 +92,12 @@ public class LeaderboardView implements Screen {
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
+
+    public void displayWaitingMessage(String drawer){
+        Label waitLabel = new Label("Waiting for "+drawer+ " to pick a word...", skin);
+        waitLabel.setFontScale(3.5f);
+        waitLabel.setAlignment(Align.center);
+        table.row();
+        table.add(waitLabel).colspan(2).padTop(30);
+    }
 }

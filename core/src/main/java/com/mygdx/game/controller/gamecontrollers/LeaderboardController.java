@@ -1,9 +1,13 @@
 package com.mygdx.game.controller.gamecontrollers;
 
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
+import com.mygdx.game.model.Player;
+import com.mygdx.game.view.gameviews.ChooseWordView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
+
 
 
 public class LeaderboardController {
@@ -21,6 +25,19 @@ public class LeaderboardController {
         this.firebase = game.getFirebaseService();
         leaderboardView.updateLeaderboard(logic.getPlayers());
         game.setScreen(leaderboardView);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                Player drawer = logic.getPlayers().stream().filter(Player::isDrawer).findFirst().orElse(null);
+
+                if (drawer != null && drawer.getName().equals(game.getPlayerName())){
+                    game.setScreen(new ChooseWordView(game, lobbyCode));
+                } else{
+                    leaderboardView.displayWaitingMessage(drawer != null ? drawer.getName() : "the drawer");
+                }
+            }
+        }, 10);
     }
 
 

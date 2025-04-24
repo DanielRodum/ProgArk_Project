@@ -1,6 +1,7 @@
 package com.mygdx.game.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.firebase.database.*;
@@ -28,7 +29,8 @@ public class FirebaseManager implements FirebaseInterface {
         data.put("host",      hostName);
         data.put("status",    "waiting");
         data.put("createdAt", ServerValue.TIMESTAMP);
-        data.put("players",   new HashMap<String,Boolean>() {{ put(hostName, true); }});
+        data.put("players",   new HashMap<String,Integer>() {{ put(hostName, 0); }});
+        data.put("word", "word");
 
         lobbyRef.setValue(data, (err,ref) -> {
             if (err == null) callback.onSuccess(code);
@@ -232,6 +234,26 @@ public class FirebaseManager implements FirebaseInterface {
     public void initializeDatabaseStructure(Runnable onComplete) {
         database.getReference("lobbies").keepSynced(true);
         onComplete.run();
+    }
+
+    @Override
+    public void updatePlayerScore(String lobbyCode, String playerName, int score) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("lobbies").child(lobbyCode).child("players").child(playerName).runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                Integer currentScore = currentData.getValue(Integer.class);
+                if (currentScore == null) currentScore = 0;
+                currentData.setValue(currentScore + score);
+                return Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+
+            }
+        });
     }
 
     private String generateLobbyCode() {

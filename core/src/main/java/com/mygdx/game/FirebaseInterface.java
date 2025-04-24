@@ -65,4 +65,6 @@ public interface FirebaseInterface {
     void leaveLobby(String lobbyCode, String playerName);
     void setupLobbyListener(String lobbyCode, LobbyStateCallback callback);
     void initializeDatabaseStructure(Runnable onComplete);
+    void updatePlayerScore(String lobbyCode, String playerName, int score);
+
 }

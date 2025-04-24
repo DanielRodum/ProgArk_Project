@@ -62,16 +62,19 @@ public class GuessingController {
     public void onGuessSubmitted(String guess) {
         if (logic.isCorrectGuess(guess)) {
             firebase.recordGuess(lobbyCode, game.getPlayerName());
-            
-            int timeLeft = timer != null ? timer.getTimeRemaining() : 0;
-            int score = Math.max(0, 100 - timeLeft); 
 
-            for (Player player : logic.getPlayers()) {
-                if (player.getName().equals(game.getPlayerName())) {
-                    player.addScore(score);
-                    break;
-                }
-            }
+            int timeLeft = timer != null ? timer.getTimeRemaining() : 0;
+            //int score = Math.max(0, 100 - timeLeft);
+            int score = timeLeft*3;
+
+            firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), score);
+
+            //for (Player player : logic.getPlayers()) {
+            //    if (player.getName().equals(game.getPlayerName())) {
+            //       player.addScore(score);
+            //        break;
+            //    }
+            //}
 
             Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
         } else {
