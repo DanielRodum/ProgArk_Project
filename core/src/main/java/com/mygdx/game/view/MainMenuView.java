@@ -22,7 +22,7 @@ public class MainMenuView implements Screen {
     private final float screenHeight = Gdx.graphics.getHeight();
     private final float btnWidth     = screenWidth * 0.7f;
     private final float btnHeight    = screenHeight * 0.08f;
-    private final float fontScale    = screenHeight / 720f;
+    private final float fontScale    = screenHeight / 600f;
     private final float pad          = screenHeight * 0.05f;
 
     public MainMenuView(doodleMain game) {
