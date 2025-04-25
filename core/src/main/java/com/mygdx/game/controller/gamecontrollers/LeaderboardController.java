@@ -24,6 +24,7 @@ public class LeaderboardController {
         this.lobbyCode = lobbyCode;
         this.firebase = game.getFirebaseService();
         leaderboardView.updateLeaderboard(logic.getPlayers());
+        game.setScreen(leaderboardView);
 
         Timer.schedule(new Timer.Task() {
             @Override
@@ -33,7 +34,6 @@ public class LeaderboardController {
                 if (drawer != null && drawer.getName().equals(game.getPlayerName())){
                     game.setScreen(new ChooseWordView(game, lobbyCode));
                 } else{
-                    game.setScreen(leaderboardView);
                     leaderboardView.displayWaitingMessage(drawer != null ? drawer.getName() : "the drawer");
                 }
             }
