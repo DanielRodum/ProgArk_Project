@@ -64,17 +64,15 @@ public class GuessingController {
             firebase.recordGuess(lobbyCode, game.getPlayerName());
 
             int timeLeft = timer != null ? timer.getTimeRemaining() : 0;
-            //int score = Math.max(0, 100 - timeLeft);
             int score = timeLeft*3;
 
+            for (Player player : logic.getPlayers()) {
+                if (player.getName().equals(game.getPlayerName())) {
+                   player.addScore(score);
+                    break;
+                }
+            }
             firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), score);
-
-            //for (Player player : logic.getPlayers()) {
-            //    if (player.getName().equals(game.getPlayerName())) {
-            //       player.addScore(score);
-            //        break;
-            //    }
-            //}
 
             Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
         } else {

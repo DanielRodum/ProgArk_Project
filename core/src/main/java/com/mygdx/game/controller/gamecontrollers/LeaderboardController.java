@@ -1,51 +1,55 @@
+// LeaderboardController.java
 package com.mygdx.game.controller.gamecontrollers;
 
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
-import com.mygdx.game.model.Player;
 import com.mygdx.game.view.gameviews.ChooseWordView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
-
-
 public class LeaderboardController {
     private final doodleMain game;
+    private final LeaderboardView leaderboardView;
     private final GameLogic logic;
     private final String lobbyCode;
     private final FirebaseInterface firebase;
-    private final LeaderboardView leaderboardView;
-    private String next;
 
-    public LeaderboardController(doodleMain game, LeaderboardView leaderboardView, GameLogic logic, String lobbyCode, String next) {
-        this.game = game;
+    public LeaderboardController(doodleMain game,
+                                 LeaderboardView leaderboardView,
+                                 GameLogic logic,
+                                 String lobbyCode) {
+        this.game           = game;
         this.leaderboardView = leaderboardView;
-        this.logic = logic;
-        this.lobbyCode = lobbyCode;
-        this.firebase = game.getFirebaseService();
-        this.next = next;
-        leaderboardView.updateLeaderboard(logic.getPlayers());
-        game.setScreen(leaderboardView);
+        this.logic          = logic;
+        this.lobbyCode      = lobbyCode;
+        this.firebase       = game.getFirebaseService();
 
-        Timer.schedule(new Timer.Task() {
+        // show initial scores
+        leaderboardView.updateLeaderboard(logic.getPlayers());
+
+        // now listen for the next round status flip
+        firebase.setupLobbyListener(lobbyCode, new FirebaseInterface.LobbyStateCallback() {
+            @Override public void onPlayerJoined(String n)   {}
+            @Override public void onPlayerLeft(String n)     {}
+
             @Override
-            public void run() {
-                firebase.startGame(lobbyCode, next);
-                Player drawer = logic.getPlayers().stream().filter(Player::isDrawer).findFirst().orElse(null);
-
-                if (drawer != null && drawer.getName().equals(game.getPlayerName())){
-                    game.setScreen(new ChooseWordView(game, lobbyCode));
-                } else{
-                    leaderboardView.displayWaitingMessage(drawer != null ? drawer.getName() : "the drawer");
-                }
-
+            public void onGameStarted(String drawerName) {
+                Gdx.app.postRunnable(() -> {
+                    if (game.getPlayerName().equals(drawerName)) {
+                        // I'm the drawer → choose word
+                        game.setScreen(new ChooseWordView(game, lobbyCode));
+                    } else {
+                        // stay on leaderboard until word chosen
+                        game.setScreen(leaderboardView);
+                        leaderboardView.displayWaitingMessage(drawerName);
+                    }
+                });
             }
-        }, 10);
-    }
 
-
-    public void refreshLeaderboard() {
-        leaderboardView.updateLeaderboard(logic.getPlayers());
+            @Override public void onWordChosen(String word) {}
+            @Override public void onLobbyClosed()          {}
+            @Override public void onError(String msg)       {}
+        });
     }
 }
