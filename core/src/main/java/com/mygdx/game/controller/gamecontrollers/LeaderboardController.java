@@ -16,19 +16,22 @@ public class LeaderboardController {
     private final String lobbyCode;
     private final FirebaseInterface firebase;
     private final LeaderboardView leaderboardView;
+    private String next;
 
-    public LeaderboardController(doodleMain game, LeaderboardView leaderboardView, GameLogic logic, String lobbyCode) {
+    public LeaderboardController(doodleMain game, LeaderboardView leaderboardView, GameLogic logic, String lobbyCode, String next) {
         this.game = game;
         this.leaderboardView = leaderboardView;
         this.logic = logic;
         this.lobbyCode = lobbyCode;
         this.firebase = game.getFirebaseService();
+        this.next = next;
         leaderboardView.updateLeaderboard(logic.getPlayers());
         game.setScreen(leaderboardView);
 
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
+                firebase.startGame(lobbyCode, next);
                 Player drawer = logic.getPlayers().stream().filter(Player::isDrawer).findFirst().orElse(null);
 
                 if (drawer != null && drawer.getName().equals(game.getPlayerName())){
@@ -36,6 +39,7 @@ public class LeaderboardController {
                 } else{
                     leaderboardView.displayWaitingMessage(drawer != null ? drawer.getName() : "the drawer");
                 }
+
             }
         }, 10);
     }

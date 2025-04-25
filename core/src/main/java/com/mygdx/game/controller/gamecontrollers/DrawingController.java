@@ -56,19 +56,13 @@ public class DrawingController {
         if (roundTimer != null && roundTimer.isRunning()) {
             roundTimer.stop();
         }
-        Gdx.app.postRunnable(() -> new LeaderboardController(game, new LeaderboardView(), logic, lobbyCode));
         if (game.getPlayerName().equals(currentDrawer)) {
             // pick next drawer (round-robin)
             List<String> names = logic.getPlayers().stream()
                 .map(p -> p.getName()).collect(Collectors.toList());
             int idx = names.indexOf(currentDrawer);
             String next = names.get((idx + 1) % names.size());
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    firebase.startGame(lobbyCode, next);
-                }
-            }, 5);
+            Gdx.app.postRunnable(() -> new LeaderboardController(game, new LeaderboardView(), logic, lobbyCode, next));
         }
     }
 
