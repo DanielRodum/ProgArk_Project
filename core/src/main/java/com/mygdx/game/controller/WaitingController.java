@@ -48,6 +48,7 @@ public class WaitingController {
 
             @Override
             public void onWordChosen(String word) {
+                if (currentDrawer == null) return;
                 Gdx.app.postRunnable(() -> {
                     // only guessers transition to guessing view
                     if (!game.getPlayerName().equals(currentDrawer)) {

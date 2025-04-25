@@ -30,7 +30,6 @@ public class FirebaseManager implements FirebaseInterface {
         data.put("status",    "waiting");
         data.put("createdAt", ServerValue.TIMESTAMP);
         data.put("players",   new HashMap<String,Integer>() {{ put(hostName, 0); }});
-        data.put("word", "word");
 
         lobbyRef.setValue(data, (err,ref) -> {
             if (err == null) callback.onSuccess(code);
