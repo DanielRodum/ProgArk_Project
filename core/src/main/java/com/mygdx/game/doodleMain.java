@@ -43,11 +43,6 @@ public class doodleMain extends Game {
                 }
 
                 @Override
-                public void startDrawingRound(String l, String w, LobbyCallback cb) {
-                    cb.onSuccess(l);
-                }
-
-                @Override
                 public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
                     // no‐op
                 }
@@ -117,6 +112,11 @@ public class doodleMain extends Game {
 
                 @Override
                 public void subscribeToGuesses(String lobbyCode, GuessesCallback callback) {
+
+                }
+
+                @Override
+                public void subscribeToScores(String lobbyCode, ScoresCallback cb) {
 
                 }
             };

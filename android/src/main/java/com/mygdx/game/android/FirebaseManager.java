@@ -1,19 +1,16 @@
-// FirebaseManager.java
 package com.mygdx.game.android;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.badlogic.gdx.math.Vector2;
 import com.google.firebase.database.*;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mygdx.game.FirebaseInterface;
-
 import java.util.*;
 
 public class FirebaseManager implements FirebaseInterface {
-    private final FirebaseDatabase database  = FirebaseDatabase.getInstance();
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     @Override
@@ -99,50 +96,51 @@ public class FirebaseManager implements FirebaseInterface {
     public void setupLobbyListener(String lobbyCode, LobbyStateCallback cb) {
         DatabaseReference lobby = database.getReference("lobbies/" + lobbyCode);
 
-        // 1) Listen for status flips: "choosing" → drawer picks word
-        lobby.child("status").addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot snap) {
-                if (!snap.exists()) {
-                    cb.onLobbyClosed();
-                    return;
+        // 1) Whenever currentDrawer flips, fire onGameStarted → choose‐word phase
+        lobby.child("currentDrawer")
+            .addValueEventListener(new ValueEventListener() {
+                @Override public void onDataChange(DataSnapshot snap) {
+                    String drawer = snap.getValue(String.class);
+                    if (drawer != null) {
+                        cb.onGameStarted(drawer);
+                    }
                 }
-                String st = snap.getValue(String.class);
-                if ("choosing".equals(st)) {
-                    // pull who’s set as the next drawer
-                    database.getReference("lobbies/" + lobbyCode + "/currentDrawer")
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override public void onDataChange(DataSnapshot ds) {
-                                String drawer = ds.getValue(String.class);
-                                if (drawer != null) cb.onGameStarted(drawer);
-                            }
-                            @Override public void onCancelled(DatabaseError e) {}
-                        });
-                } else if (st != null && st.startsWith("drawing:")) {
-                    // word has been chosen, drawing underway
-                    String drawer = st.substring("drawing:".length());
-                    cb.onGameStarted(drawer);
+                @Override public void onCancelled(DatabaseError e) {
+                    // ignore
                 }
-            }
-            @Override public void onCancelled(DatabaseError e) {
-                cb.onLobbyClosed();
-            }
-        });
+            });
 
-        // 2) Listen for the word having been chosen
-        lobby.child("word").addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot snap) {
-                if (snap.exists()) {
-                    String w = snap.getValue(String.class);
-                    if (w != null) cb.onWordChosen(w);
+        // 2) Whenever status switches to “drawing:XYZ”, fire onGameStarted → drawing phase
+        lobby.child("status")
+            .addValueEventListener(new ValueEventListener() {
+                @Override public void onDataChange(DataSnapshot snap) {
+                    String st = snap.getValue(String.class);
+                    if (st != null && st.startsWith("drawing:")) {
+                        String drawer = st.substring("drawing:".length());
+                        cb.onGameStarted(drawer);
+                    }
                 }
-            }
-            @Override public void onCancelled(DatabaseError e) {}
-        });
+                @Override public void onCancelled(DatabaseError e) {
+                    // ignore
+                }
+            });
 
-        // 3) Listen for players joining / leaving
+        // 3) Listen for the chosen word so guessers can move on
+        lobby.child("word")
+            .addValueEventListener(new ValueEventListener() {
+                @Override public void onDataChange(DataSnapshot snap) {
+                    if (snap.exists()) {
+                        String w = snap.getValue(String.class);
+                        if (w != null) cb.onWordChosen(w);
+                    }
+                }
+                @Override public void onCancelled(DatabaseError e) {}
+            });
+
+        // 4) Listen for players joining/leaving
         lobby.child("players").addChildEventListener(new ChildEventListener() {
-            @Override public void onChildAdded(DataSnapshot d, String p)  { cb.onPlayerJoined(d.getKey()); }
-            @Override public void onChildRemoved(DataSnapshot d)          { cb.onPlayerLeft(d.getKey()); }
+            @Override public void onChildAdded(DataSnapshot d, String p)   { cb.onPlayerJoined(d.getKey()); }
+            @Override public void onChildRemoved(DataSnapshot d)           { cb.onPlayerLeft(d.getKey()); }
             @Override public void onChildChanged(DataSnapshot d, String p) {}
             @Override public void onChildMoved(DataSnapshot d, String p)   {}
             @Override public void onCancelled(DatabaseError e)             {}
@@ -226,22 +224,23 @@ public class FirebaseManager implements FirebaseInterface {
         ref.setValue(data);
     }
 
-    @Override public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) {
-        DatabaseReference strokesRef = database.getReference("lobbies/" + lobbyCode + "/strokes");
+    @Override
+    public void subscribeToStrokes(String lobbyCode, StrokeCallback cb) {
+        DatabaseReference strokesRef =
+            database.getReference("lobbies/" + lobbyCode + "/strokes");
         strokesRef.addChildEventListener(new ChildEventListener() {
-            @Override public void onChildAdded(DataSnapshot snap, String pk)   { handleStroke(snap, cb); }
-            @Override public void onChildChanged(DataSnapshot snap, String pk) { handleStroke(snap, cb); }
-            @Override public void onChildRemoved(DataSnapshot s)               {}
-            @Override public void onChildMoved(DataSnapshot s, String p)       {}
-            @Override public void onCancelled(DatabaseError e)                 {}
-
-            private void handleStroke(DataSnapshot snap, StrokeCallback cb) {
-                String id  = snap.getKey();
+            @Override public void onChildAdded(DataSnapshot snap, String p) { handle(snap); }
+            @Override public void onChildChanged(DataSnapshot snap, String p) { handle(snap); }
+            @Override public void onChildRemoved(DataSnapshot s) { }
+            @Override public void onChildMoved(DataSnapshot s, String p) { }
+            @Override public void onCancelled(DatabaseError e) { }
+            private void handle(DataSnapshot snap) {
+                String id = snap.getKey();
                 String hex = snap.child("color").getValue(String.class);
                 List<Vector2> pts = new ArrayList<>();
-                for (DataSnapshot ps : snap.child("points").getChildren()) {
-                    Double x = ps.child("x").getValue(Double.class);
-                    Double y = ps.child("y").getValue(Double.class);
+                for (DataSnapshot pSnap : snap.child("points").getChildren()) {
+                    Double x = pSnap.child("x").getValue(Double.class);
+                    Double y = pSnap.child("y").getValue(Double.class);
                     if (x!=null && y!=null) pts.add(new Vector2(x.floatValue(), y.floatValue()));
                 }
                 cb.onStrokeAdded(id, pts, hex);
@@ -272,11 +271,6 @@ public class FirebaseManager implements FirebaseInterface {
         });
     }
 
-    @Override
-    public void startDrawingRound(String l, String w, LobbyCallback cb) {
-
-    }
-
     @Override public void updatePlayerScore(String lobbyCode, String playerName, int delta) {
         DatabaseReference ref = database.getReference("lobbies/" + lobbyCode + "/players/" + playerName);
         ref.runTransaction(new Transaction.Handler() {
@@ -287,6 +281,22 @@ public class FirebaseManager implements FirebaseInterface {
                 return Transaction.success(m);
             }
             @Override public void onComplete(@Nullable DatabaseError e, boolean c, @Nullable DataSnapshot s) {}
+        });
+    }
+
+    @Override
+    public void subscribeToScores(String lobbyCode, ScoresCallback cb) {
+        DatabaseReference playersRef = database.getReference("lobbies/" + lobbyCode + "/players");
+        playersRef.addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot snap) {
+                Map<String,Integer> scores = new HashMap<>();
+                for (DataSnapshot child : snap.getChildren()) {
+                    Integer sc = child.getValue(Integer.class);
+                    scores.put(child.getKey(), sc != null ? sc : 0);
+                }
+                cb.onScoresUpdated(scores);
+            }
+            @Override public void onCancelled(DatabaseError e) { }
         });
     }
 

@@ -21,6 +21,10 @@ allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
 
+  repositories{
+    google()
+    mavenCentral()
+  }
   // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
   idea {
     module {
@@ -75,6 +79,7 @@ subprojects {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
+
 }
 
 eclipse.project.name = 'progark-project' + '-parent'

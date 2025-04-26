@@ -13,8 +13,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -25,7 +29,6 @@ import com.mygdx.game.doodleMain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.Vector;
 
 public class DrawingView implements Screen {
     private final doodleMain game;
@@ -41,7 +44,7 @@ public class DrawingView implements Screen {
     private Label timerLabel;
     private final List<Texture> colorTextures = new ArrayList<>();
 
-    public DrawingView(doodleMain game, String lobbyCode){
+    public DrawingView(doodleMain game, String lobbyCode) {
         this.game = game;
         OrthographicCamera camera = new OrthographicCamera();
         this.viewport = new FitViewport(1080, 1920, camera);
@@ -51,11 +54,13 @@ public class DrawingView implements Screen {
 
         setupUI();
 
-        Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, createDrawingInputProcessor()));
+        InputMultiplexer mux = new InputMultiplexer(uiStage, createDrawingInputProcessor());
+        Gdx.input.setInputProcessor(mux);
+
         this.controller = new DrawingController(game, this, lobbyCode);
     }
 
-    private void setupUI(){
+    private void setupUI() {
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
         Table table = new Table();
         table.setFillParent(true);
@@ -66,7 +71,7 @@ public class DrawingView implements Screen {
         wordLabel.setColor(Color.WHITE);
         wordLabel.setFontScale(2f);
 
-        timerLabel = new Label("30", skin);
+        timerLabel = new Label("60", skin);
         timerLabel.setColor(Color.YELLOW);
         timerLabel.setFontScale(2f);
 
@@ -75,6 +80,7 @@ public class DrawingView implements Screen {
         table.row().padTop(10);
 
         Table colorButtons = new Table();
+        // add color palette buttons
         addColorButton(colorButtons, Color.BLACK);
         addColorButton(colorButtons, Color.RED);
         addColorButton(colorButtons, Color.GREEN);
@@ -88,24 +94,24 @@ public class DrawingView implements Screen {
         table.add(colorButtons).colspan(2).center().padTop(20);
     }
 
-    private void addColorButton(Table table, Color color){
+    private void addColorButton(Table table, Color color) {
         int size = 80;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
         pixmap.fill();
 
-        Texture texture = new Texture(pixmap);
+        Texture tex = new Texture(pixmap);
         pixmap.dispose();
-        colorTextures.add(texture);
+        colorTextures.add(tex);
 
-        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
+        TextureRegionDrawable draw = new TextureRegionDrawable(new TextureRegion(tex));
         ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.imageUp = drawable;
+        style.imageUp = draw;
 
         ImageButton btn = new ImageButton(style);
-        btn.addListener(new ClickListener(){
+        btn.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent e, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 currentColor = new Color(color);
             }
         });
@@ -114,109 +120,72 @@ public class DrawingView implements Screen {
 
     private InputProcessor createDrawingInputProcessor() {
         return new InputAdapter() {
-            private Stroke currentStroke = null;
-            private String currentStrokeId = null;
+            private Stroke currentStroke;
+            private String currentId;
 
             @Override
-            public boolean touchDown(int sx, int sy, int ptr, int button) {
-                Vector2 p = viewport.unproject(new Vector2(sx, sy));
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector2 p = viewport.unproject(new Vector2(screenX, screenY));
                 currentStroke = new Stroke(currentColor);
-                currentStrokeId = UUID.randomUUID().toString();
+                currentId = UUID.randomUUID().toString();
                 currentStroke.addPoint(p);
                 strokes.add(currentStroke);
-                // send initial stroke point to guessers
-                controller.onLocalStrokeCompleted(currentStrokeId,
+                controller.onLocalStrokeCompleted(
+                    currentId,
                     new ArrayList<>(currentStroke.getPoints()),
-                    currentStroke.getColor());
+                    currentStroke.getColor()
+                );
                 return true;
             }
 
             @Override
-            public boolean touchDragged(int sx, int sy, int ptr) {
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
                 if (currentStroke != null) {
-                    Vector2 p = viewport.unproject(new Vector2(sx, sy));
+                    Vector2 p = viewport.unproject(new Vector2(screenX, screenY));
                     currentStroke.addPoint(p);
-                    // send updated stroke data for real-time rendering
-                    controller.onLocalStrokeCompleted(currentStrokeId,
+                    controller.onLocalStrokeCompleted(
+                        currentId,
                         new ArrayList<>(currentStroke.getPoints()),
-                        currentStroke.getColor());
+                        currentStroke.getColor()
+                    );
                 }
                 return true;
             }
 
             @Override
-            public boolean touchUp(int sx, int sy, int ptr, int button) {
-                // clear stroke state on lift
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 currentStroke = null;
-                currentStrokeId = null;
+                currentId = null;
                 return true;
             }
         };
     }
 
-    public void setWord(String word){
-        if (wordLabel!=null){
-            wordLabel.setText("Word: "+word);
-        }
+    /** Called by controller. */
+    public void setWord(String word) {
+        wordLabel.setText("Word: " + word);
     }
 
-    private static class Stroke{
-        private final List<Vector2> points = new ArrayList<>();
-        private final Color color;
-        public Stroke(Color color){
-            this.color = new Color(color);
-        }
-
-        public void addPoint(Vector2 point){
-            points.add(point);
-        }
-
-        public void render(ShapeRenderer renderer){
-            renderer.setColor(color);
-            for (int i=1; i<points.size(); i++){
-                Vector2 p1 = points.get(i-1);
-                Vector2 p2 = points.get(i);
-                renderer.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
-            }
-        }
-
-        public List<Vector2> getPoints() {
-            return points;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-    }
-
-    public void addRemoteStroke(List<Vector2> pts, Color color) {
-        Stroke s = new Stroke(color);
-        for (Vector2 p : pts) {
-            s.addPoint(p);
-        }
-        strokes.add(s);
-    }
-
-
-    public void setTime(int seconds){
+    /** Called by controller each tick. */
+    public void setTime(int seconds) {
         timerLabel.setText(String.valueOf(seconds));
     }
 
-    @Override
-    public void show() {
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+    /** Called by controller when remote stroke arrives. */
+    public void addRemoteStroke(List<Vector2> pts, Color color) {
+        Stroke s = new Stroke(color);
+        for (Vector2 p : pts) s.addPoint(p);
+        strokes.add(s);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1,1,1,1);
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Stroke stroke : strokes){
-            stroke.render(shapeRenderer);
-        }
+        for (Stroke s : strokes) s.render(shapeRenderer);
         shapeRenderer.end();
 
         uiStage.act(delta);
@@ -228,25 +197,35 @@ public class DrawingView implements Screen {
         viewport.update(width, height, true);
     }
 
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
+    @Override public void show() { }
+    @Override public void hide() { }
+    @Override public void pause() { }
+    @Override public void resume() { }
 
     @Override
     public void dispose() {
         uiStage.dispose();
         shapeRenderer.dispose();
-        for (Texture t : colorTextures) t.dispose();
+        for (Texture t : colorTextures) {
+            t.dispose();
+        }
+    }
+
+    // ───────────────────────────────────────────────────
+
+    private static class Stroke {
+        private final List<Vector2> points = new ArrayList<>();
+        private final Color color;
+        public Stroke(Color c) { this.color = new Color(c); }
+        public void addPoint(Vector2 p) { points.add(p); }
+        public List<Vector2> getPoints() { return points; }
+        public Color getColor() { return color; }
+        public void render(ShapeRenderer r) {
+            r.setColor(color);
+            for (int i = 1; i < points.size(); i++) {
+                Vector2 p1 = points.get(i - 1), p2 = points.get(i);
+                r.rectLine(p1.x, p1.y, p2.x, p2.y, 10f);
+            }
+        }
     }
 }

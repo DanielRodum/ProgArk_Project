@@ -6,98 +6,103 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LeaderboardView implements Screen {
-    private Stage stage;
-    private Table table;
-    private Skin skin;
+    private final Stage stage;
+    private final Table table;
+    private final Skin skin;
+    private final doodleMain game;
+    private final String lobbyCode;
+    private final String currentDrawer;
 
-    public LeaderboardView() {
+    public LeaderboardView(doodleMain game, String lobbyCode, String currentDrawer) {
+        this.game = game;
+        this.lobbyCode = lobbyCode;
+        this.currentDrawer = currentDrawer;
+
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Gdx.input.setInputProcessor(stage);
 
-        create();
-    }
-
-    public void create() {
-        stage.clear();
-
-        Table rootTable = new Table();
-        rootTable.setFillParent(true);
-        stage.addActor(rootTable);
+        // root layout
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
 
         table = new Table();
         table.top();
+        ScrollPane scroll = new ScrollPane(table, skin);
+        scroll.setScrollingDisabled(true, false);
+        scroll.setFadeScrollBars(false);
+        root.add(scroll).expand().fill().pad(20);
 
-        ScrollPane scrollPane = new ScrollPane(table);
-        scrollPane.setScrollingDisabled(true, false);
-        scrollPane.setFadeScrollBars(false);
-
-        rootTable.add(scrollPane).expand().fill().pad(20);
-
-        Gdx.input.setInputProcessor(stage);
-
+        // initially empty
         updateLeaderboard(new ArrayList<>());
+
+        // schedule the transition after 8 seconds
+        stage.addAction(Actions.sequence(
+            Actions.delay(8f),
+            Actions.run(() -> {
+                // only proceed if we're still on this screen
+                if (game.getScreen() instanceof LeaderboardView) {
+                    if (game.getPlayerName().equals(currentDrawer)) {
+                        game.setScreen(new ChooseWordView(game, lobbyCode));
+                    } else {
+                        displayWaitingMessage(currentDrawer);
+                    }
+                }
+            })
+        ));
     }
 
     public void updateLeaderboard(List<Player> players) {
         table.clear();
 
         Label title = new Label("Leaderboard", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        title.setFontScale(6.0f);
+        title.setFontScale(6f);
         title.setAlignment(Align.center);
-        table.add(title).colspan(2).padBottom(40);
-        table.row();
+        table.add(title).colspan(2).padBottom(40).row();
 
         players.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-
-        for (Player player : players) {
-            Label playerLabel = new Label(player.getName(), skin);
-            Label scoreLabel = new Label(String.valueOf(player.getScore()), skin);
-
-            playerLabel.setFontScale(5.0f);
-            scoreLabel.setFontScale(5.0f);
-
-            table.add(playerLabel).padRight(20);
-            table.add(scoreLabel).padLeft(20);
-            table.row();
+        for (Player p : players) {
+            Label name = new Label(p.getName(), skin);
+            Label score = new Label(String.valueOf(p.getScore()), skin);
+            name.setFontScale(5f);
+            score.setFontScale(5f);
+            table.add(name).padRight(20);
+            table.add(score).padLeft(20).row();
         }
     }
 
-    @Override
-    public void render(float delta) {
+    public void displayWaitingMessage(String drawer) {
+        table.row();
+        Label wait = new Label("Waiting for " + drawer + " to pick a word...", skin);
+        wait.setFontScale(3.5f);
+        wait.setAlignment(Align.center);
+        table.add(wait).colspan(2).padTop(30);
+    }
+
+    @Override public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
     }
-
-    @Override
-    public void dispose() {
-        stage.dispose();
-        skin.dispose();
-    }
-
-    @Override public void resize(int width, int height) {}
-    @Override public void show() {}
-    @Override public void hide() {}
-    @Override public void pause() {}
-    @Override public void resume() {}
-
-    public void displayWaitingMessage(String drawer){
-        Label waitLabel = new Label("Waiting for "+drawer+ " to pick a word...", skin);
-        waitLabel.setFontScale(3.5f);
-        waitLabel.setAlignment(Align.center);
-        table.row();
-        table.add(waitLabel).colspan(2).padTop(30);
-    }
+    @Override public void resize(int w, int h)  { stage.getViewport().update(w, h, true); }
+    @Override public void show()    {}
+    @Override public void hide()    {}
+    @Override public void pause()   {}
+    @Override public void resume()  {}
+    @Override public void dispose() { stage.dispose(); skin.dispose(); }
 }

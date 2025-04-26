@@ -14,6 +14,9 @@ import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.gameviews.DrawingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WaitingView implements Screen {
     private final doodleMain game;
     private final Stage stage;
@@ -23,12 +26,15 @@ public class WaitingView implements Screen {
     private final WaitingController controller;
     private final String lobbyCode;
 
+    // Keep track of joined players
+    private final List<String> players = new ArrayList<>();
+
     public WaitingView(doodleMain game, String lobbyCode, boolean isHost) {
-        this.game = game;
+        this.game      = game;
         this.lobbyCode = lobbyCode;
-        this.stage = new Stage(new ScreenViewport());
+        this.stage     = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
-        this.skin  = new Skin(Gdx.files.internal("uiskin.json"));
+        this.skin      = new Skin(Gdx.files.internal("uiskin.json"));
 
         Table root = new Table();
         root.setFillParent(true);
@@ -65,18 +71,43 @@ public class WaitingView implements Screen {
 
         root.add(btns).pad(10);
 
+        // must instantiate controller after UI is set up
         controller = new WaitingController(game, this, lobbyCode, isHost);
     }
 
+    /** Add a new player and rebuild the table */
     public void addPlayer(String name) {
-        Label l = new Label(name, skin);
-        l.setFontScale(1.5f);
-        playersTable.add(l).row();
+        if (!players.contains(name)) {
+            players.add(name);
+            rebuildPlayersTable();
+        }
     }
 
+    /** Remove a player and rebuild the table */
     public void removePlayer(String name) {
+        if (players.remove(name)) {
+            rebuildPlayersTable();
+        }
+    }
+
+    /** Helper to clear & repopulate the playersTable from our list */
+    private void rebuildPlayersTable() {
         playersTable.clear();
-        // you may want to re‑add remaining players from controller/model
+        for (String p : players) {
+            Label lbl = new Label(p, skin);
+            lbl.setFontScale(1.5f);
+            playersTable.add(lbl).row();
+        }
+    }
+
+    /** Returns how many players are in the lobby */
+    public int getPlayerCount() {
+        return players.size();
+    }
+
+    /** Returns a copy of the current player list */
+    public List<String> getPlayers() {
+        return new ArrayList<>(players);
     }
 
     /** Called when it's time to transition to drawing or leaderboard */
@@ -84,11 +115,11 @@ public class WaitingView implements Screen {
         if (drawer.equals(game.getPlayerName())) {
             game.setScreen(new DrawingView(game, lobbyCode));
         } else {
-            game.setScreen(new LeaderboardView());
+            game.setScreen(new LeaderboardView(game, lobbyCode, drawer));
         }
     }
 
-    /** Show a one‑line status in place of the lobby code */
+    /** Show a one-line status in place of the lobby code */
     public void showStatus(String message) {
         codeLabel.setText(message);
         codeLabel.setColor(Color.YELLOW);
@@ -101,7 +132,6 @@ public class WaitingView implements Screen {
         d.button("OK");
         d.show(stage);
     }
-    // ──────────────────────────────────────────────────────────────────────────
 
     @Override public void render(float delta) {
         Gdx.gl.glClearColor(0.1f,0.1f,0.1f,1f);
@@ -110,9 +140,9 @@ public class WaitingView implements Screen {
         stage.draw();
     }
     @Override public void resize(int w,int h) { stage.getViewport().update(w,h,true); }
-    @Override public void show() {}
-    @Override public void hide() {}
-    @Override public void pause() {}
+    @Override public void show()   {}
+    @Override public void hide()   {}
+    @Override public void pause()  {}
     @Override public void resume() {}
     @Override public void dispose() { stage.dispose(); skin.dispose(); }
 }
