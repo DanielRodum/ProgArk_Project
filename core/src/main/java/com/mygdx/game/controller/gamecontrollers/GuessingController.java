@@ -79,11 +79,15 @@ public class GuessingController implements GuessingView.GuessListener {
             firebase.recordGuess(lobbyCode, game.getPlayerName());
             firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), points);
             Gdx.app.postRunnable(() -> {
+                Gdx.input.setOnscreenKeyboardVisible(false); //remove keyboard
                 view.showCorrectFeedback();
                 view.disableInput();
             });
         } else {
-            Gdx.app.postRunnable(() -> view.showIncorrectFeedback());
+            Gdx.app.postRunnable(() -> {
+                Gdx.input.setOnscreenKeyboardVisible(false); //remove keyboard
+                view.showIncorrectFeedback();
+            });
         }
     }
 
