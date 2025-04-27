@@ -30,8 +30,7 @@ public class MainMenuController {
 
     /** Switches to the libGDX TutorialView, which immediately calls openTutorial(). */
     public void handleTutorial() {
-        //game.setScreen(new TutorialView(game));
-        game.setScreen(new WaitingView(game, "QPURRR", false));
+        game.setScreen(new TutorialView(game));
     }
 
     public void createLobbyWithName(String playerName) {

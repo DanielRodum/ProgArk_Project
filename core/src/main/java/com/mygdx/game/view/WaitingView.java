@@ -36,17 +36,15 @@ public class WaitingView implements Screen {
 
         codeLabel = new Label("Lobby Code: " + lobbyCode, skin);
         codeLabel.setFontScale(5f);
-        root.add(codeLabel).pad(10).row();
+        root.add(codeLabel).pad(50).row();
 
         playersTable = new Table();
-        ScrollPane scroll = new ScrollPane(playersTable, skin);
-        scroll.setFadeScrollBars(false);
-        root.add(scroll).size(400,200).pad(10).row();
+        root.add(playersTable).pad(10).row();
 
         Table btns = new Table();
         if (isHost) {
             TextButton start = new TextButton("Start Game", skin);
-            start.getLabel().setFontScale(1.5f);
+            start.getLabel().setFontScale(3f);
             start.addListener(new ClickListener() {
                 @Override public void clicked(InputEvent e, float x, float y) {
                     controller.handleStartGame();
@@ -55,7 +53,7 @@ public class WaitingView implements Screen {
             btns.add(start).padRight(20);
         }
         TextButton leave = new TextButton("Leave Lobby", skin);
-        leave.getLabel().setFontScale(1.5f);
+        leave.getLabel().setFontScale(3f);
         leave.addListener(new ClickListener() {
             @Override public void clicked(InputEvent e, float x, float y) {
                 controller.leaveLobby();
@@ -70,8 +68,8 @@ public class WaitingView implements Screen {
 
     public void addPlayer(String name) {
         Label l = new Label(name, skin);
-        l.setFontScale(1.5f);
-        playersTable.add(l).row();
+        l.setFontScale(5f);
+        playersTable.add(l).pad(10).row();
     }
 
     public void removePlayer(String name) {
