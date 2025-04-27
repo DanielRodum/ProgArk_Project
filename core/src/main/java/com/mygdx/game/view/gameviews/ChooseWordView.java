@@ -35,7 +35,7 @@ public class ChooseWordView implements Screen {
     private void showLoading() {
         stage.clear();
         Label lbl = new Label("Loading words...", skin);
-        lbl.setFontScale(2f);
+        lbl.setFontScale(7f);
         Table t = new Table();
         t.setFillParent(true);
         t.add(lbl);
@@ -46,22 +46,22 @@ public class ChooseWordView implements Screen {
         stage.clear();
         Table t = new Table();
         t.setFillParent(true);
-        t.top().padTop(50);
+        t.top().padTop(100);
         stage.addActor(t);
 
-        Label title = new Label("Choose a Word", skin);
-        title.setFontScale(3f);
-        t.add(title).colspan(2).padBottom(30).row();
+        Label title = new Label("Choose a Word:", skin);
+        title.setFontScale(7f);
+        t.add(title).colspan(2).padBottom(50).row();
 
         for (String w : words) {
             TextButton b = new TextButton(w, skin);
-            b.getLabel().setFontScale(2f);
+            b.getLabel().setFontScale(3f);
             b.addListener(new ClickListener() {
                 @Override public void clicked(InputEvent e, float x, float y) {
                     controller.selectWord(w);
                 }
             });
-            t.add(b).width(300).height(60).pad(10).row();
+            t.add(b).width(400).height(150).pad(10).row();
         }
     }
 

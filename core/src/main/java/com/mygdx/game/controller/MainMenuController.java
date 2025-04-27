@@ -6,6 +6,8 @@ import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.MainMenuView;
 import com.mygdx.game.view.TutorialView;
 import com.mygdx.game.view.WaitingView;
+import com.mygdx.game.view.gameviews.ChooseWordView;
+import com.mygdx.game.view.gameviews.DrawingView;
 
 import java.util.Locale;
 
@@ -28,7 +30,8 @@ public class MainMenuController {
 
     /** Switches to the libGDX TutorialView, which immediately calls openTutorial(). */
     public void handleTutorial() {
-        game.setScreen(new TutorialView(game));
+        //game.setScreen(new TutorialView(game));
+        game.setScreen(new WaitingView(game, "QPURRR", false));
     }
 
     public void createLobbyWithName(String playerName) {

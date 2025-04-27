@@ -64,11 +64,11 @@ public class DrawingView implements Screen {
 
         wordLabel = new Label("Word: loading...", skin);
         wordLabel.setColor(Color.BLACK);
-        wordLabel.setFontScale(2f);
+        wordLabel.setFontScale(5f);
 
         timerLabel = new Label("30", skin);
         timerLabel.setColor(Color.BLACK);
-        timerLabel.setFontScale(2f);
+        timerLabel.setFontScale(5f);
 
         table.add(wordLabel).expandX().left().padLeft(20);
         table.add(timerLabel).expandX().right().padRight(20);
@@ -89,7 +89,7 @@ public class DrawingView implements Screen {
     }
 
     private void addColorButton(Table table, Color color){
-        int size = 80;
+        int size = 100;
         int borderWidth = 3;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.BLACK);

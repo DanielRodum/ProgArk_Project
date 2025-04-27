@@ -35,7 +35,7 @@ public class WaitingView implements Screen {
         stage.addActor(root);
 
         codeLabel = new Label("Lobby Code: " + lobbyCode, skin);
-        codeLabel.setFontScale(2f);
+        codeLabel.setFontScale(5f);
         root.add(codeLabel).pad(10).row();
 
         playersTable = new Table();

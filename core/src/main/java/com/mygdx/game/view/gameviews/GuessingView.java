@@ -55,8 +55,8 @@ public class GuessingView implements Screen {
             .padBottom(10f).row();
 
         timerLabel = new Label("60", skin);    // default 60
-        timerLabel.setFontScale(1.2f);
-        timerLabel.setColor(Color.RED);
+        timerLabel.setFontScale(3f);
+        timerLabel.setColor(Color.BLACK);
         timerLabel.setAlignment(Align.center);
         table.add(timerLabel)
             .width(Gdx.graphics.getWidth() * 0.8f)
@@ -64,19 +64,21 @@ public class GuessingView implements Screen {
 
         guessField = new TextField("", skin);
         guessField.setMessageText("Your guess…");
+        //MANGLER Å ØKE FONT HER! TODO
         table.add(guessField)
-            .width(Gdx.graphics.getWidth() * 0.6f)
+            .width(Gdx.graphics.getWidth() * 0.7f)
+            .height(Gdx.graphics.getHeight() * 0.03f)
             .padBottom(20f).row();
 
         submitBtn = new TextButton("Submit", skin);
-        submitBtn.getLabel().setFontScale(1.2f);
+        submitBtn.getLabel().setFontScale(3f);
         table.add(submitBtn)
-            .width(Gdx.graphics.getWidth() * 0.4f)
-            .height(Gdx.graphics.getHeight() * 0.1f)
+            .width(Gdx.graphics.getWidth() * 0.7f)
+            .height(Gdx.graphics.getHeight() * 0.08f)
             .padBottom(20f).row();
 
         feedbackLabel = new Label("", skin);
-        feedbackLabel.setFontScale(1.2f);
+        feedbackLabel.setFontScale(1.8f);
         feedbackLabel.setAlignment(Align.center);
         table.add(feedbackLabel)
             .width(Gdx.graphics.getWidth() * 0.8f).row();
