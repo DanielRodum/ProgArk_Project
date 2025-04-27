@@ -42,9 +42,7 @@ For example, `core:clean` removes `build` folder only from the `core` project.
 When you first open the game you will be presented with the main menu. Here you can choose between creating a new game lobby, joining an existing lobby or seeing a tutorial video explaining how the game is played. You can navigate by touching the screen to press the buttons.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
-  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
-  <img src="https://github.com/user-attachments/assets/bc74de66-3f0c-4ade-a7a2-2beda0df0de8" width="300">
+  <img src="https://github.com/user-attachments/assets/1835cc3e-2cc7-4790-b434-ec0e918e615a" width="300">&nbsp;
 </p>
 
 ### Tutorial
@@ -55,12 +53,16 @@ The tutorial displays a video showing how to play the game to help inexperienced
 
 To create a new lobby, press the create lobby button and enter the name you want to be displayed in the game. You will be the game host for the lobby you create. The screen will then display a lobby code that you can share with friends or online to have them join the same game as you. When all your friends have joined you can press the start game button to start the game.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e68d245d-51b4-477a-a0db-10a090abda51" width="300">&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/974bda48-b9ed-42d6-89f8-a66152714a05" width="300">&nbsp;&nbsp;
+</p>
+
 If you want of join an existing lobby and have already received a lobby code to a currently active lobby you can instead press the join lobby button. Here you get to enter a username and the lobby code to join the same lobby as your friends. You can se the other people in the that are joining the lobby displayed while you wait for the host to start the game.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
-  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
-  <img src="https://github.com/user-attachments/assets/bc74de66-3f0c-4ade-a7a2-2beda0df0de8" width="300">
+  <img src="https://github.com/user-attachments/assets/f9e8fad5-9c83-47cd-be3e-84427cd03684" width="300">&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/095b7cae-da20-4d6a-b1b5-1681709c30cb" width="300">&nbsp;
 </p>
 
 ### Gameplay/game loop
@@ -75,6 +77,11 @@ The drawing player first gets to choose a word to draw amongst a list of 6 word.
 
 The guessing players will see a screen with what the drawer is drawing in real time. They can enter the word they want to guess in the bar at the to of the screen and submit their guess by pressing the submit button. If the guess is incorrect red text will appear that tells them to “Try again” and the player may then guess a new word. If the guess is correct, green text will appear informing the guesser that their guess is “Correct”, the player will then be unable to write anymore guesses.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0451fc23-87b8-406e-aa0b-dfcf09334123" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
+</p>
 
 #### Timer & scoring
 
@@ -84,3 +91,6 @@ During each game turn a timer is displayed for both the drawers and the guessers
 
 At the end of each drawing/guessing turn a leaderboard is displayed. In the leaderboard the accumulated points across all turns for all players in the game lobby are shown. When the players are done playing the player with the highest score becomes the winner and the players may leave the game.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bc74de66-3f0c-4ade-a7a2-2beda0df0de8" width="300">&nbsp;
+</p>
