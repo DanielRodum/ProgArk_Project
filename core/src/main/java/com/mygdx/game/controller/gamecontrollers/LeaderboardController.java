@@ -5,6 +5,7 @@ import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
 import com.mygdx.game.model.Player;
+import com.mygdx.game.view.MainMenuView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
 import java.util.ArrayList;
@@ -36,7 +37,14 @@ public class LeaderboardController {
     private void showLeaderboard() {
         Gdx.app.postRunnable(() -> {
             String drawer = logic.getCurrentDrawer();
-            LeaderboardView view = new LeaderboardView(game, lobbyCode, drawer);
+            LeaderboardView view = new LeaderboardView(
+                game,
+                lobbyCode,
+                drawer,
+                () -> {
+                    firebase.leaveLobby(lobbyCode, game.getPlayerName());
+                    Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game)));
+                });
             view.updateLeaderboard(logic.getPlayers());
             game.setScreen(view);
         });

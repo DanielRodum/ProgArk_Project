@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.utils.LeaveLobbyButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,11 @@ public class GuessingView implements Screen {
     private Label feedbackLabel;
     private ShapeRenderer shapeRenderer;
     private final List<Stroke> strokes = new ArrayList<>();
+    private final Runnable onLeave;
 
-    public GuessingView(doodleMain game) {
+    public GuessingView(doodleMain game, Runnable onLeave) {
         this.game = game;
+        this.onLeave = onLeave;
         this.stage = new Stage(new ScreenViewport());
         this.skin = new Skin(Gdx.files.internal("uiskin.json"));
         Gdx.input.setInputProcessor(stage);
@@ -92,6 +95,12 @@ public class GuessingView implements Screen {
         table.add(feedbackLabel)
             .width(Gdx.graphics.getWidth() * 0.8f)
             .row();
+
+        LeaveLobbyButton leave = new LeaveLobbyButton(skin, onLeave);
+        table.add(leave)
+                .colspan(2)
+                .padTop(30f)
+                .row();
     }
 
     public void setGuessListener(GuessListener listener) {

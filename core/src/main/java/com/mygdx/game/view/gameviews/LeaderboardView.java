@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.Player;
+import com.mygdx.game.utils.LeaveLobbyButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,13 @@ public class LeaderboardView implements Screen {
     private final doodleMain game;
     private final String lobbyCode;
     private final String currentDrawer;
+    private final Runnable onLeave;
 
-    public LeaderboardView(doodleMain game, String lobbyCode, String currentDrawer) {
+    public LeaderboardView(doodleMain game, String lobbyCode, String currentDrawer, Runnable onLeave) {
         this.game = game;
         this.lobbyCode = lobbyCode;
         this.currentDrawer = currentDrawer;
+        this.onLeave = onLeave;
 
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -100,6 +103,12 @@ public class LeaderboardView implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
+        Table bottom = new Table();
+        bottom.setFillParent(true);
+        bottom.bottom().padBottom(20);
+        stage.addActor(bottom);
+        LeaveLobbyButton leave = new LeaveLobbyButton(skin, onLeave);
+        bottom.add(leave);
     }
     @Override public void resize(int w, int h)  { stage.getViewport().update(w, h, true); }
     @Override public void show()    {}

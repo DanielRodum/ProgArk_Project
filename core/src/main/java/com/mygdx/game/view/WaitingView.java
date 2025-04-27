@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.controller.WaitingController;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.utils.LeaveLobbyButton;
 import com.mygdx.game.view.gameviews.DrawingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
@@ -58,13 +59,7 @@ public class WaitingView implements Screen {
             });
             btns.add(start).padRight(20);
         }
-        TextButton leave = new TextButton("Leave Lobby", skin);
-        leave.getLabel().setFontScale(3f);
-        leave.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent e, float x, float y) {
-                controller.leaveLobby();
-            }
-        });
+        LeaveLobbyButton leave = new LeaveLobbyButton(skin, controller::leaveLobby);
         btns.add(leave);
 
         root.add(btns).pad(10);
@@ -106,15 +101,6 @@ public class WaitingView implements Screen {
     /** Returns a copy of the current player list */
     public List<String> getPlayers() {
         return new ArrayList<>(players);
-    }
-
-    /** Called when it's time to transition to drawing or leaderboard */
-    public void onGameStarted(String drawer) {
-        if (drawer.equals(game.getPlayerName())) {
-            game.setScreen(new DrawingView(game, lobbyCode));
-        } else {
-            game.setScreen(new LeaderboardView(game, lobbyCode, drawer));
-        }
     }
 
     /** Show a one-line status in place of the lobby code */

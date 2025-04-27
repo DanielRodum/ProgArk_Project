@@ -64,11 +64,6 @@ public class GameLogic {
         return currentDrawer;
     }
 
-    /** Returns the current word being drawn */
-    public String getCurrentWord() {
-        return currentWord;
-    }
-
     /** Returns a masked version of the current word (e.g. "_ _ _") */
     public String getMaskedWord() {
         if (currentWord == null) return "";

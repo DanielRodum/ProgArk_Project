@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.controller.CreateLobbyController;
 import com.mygdx.game.doodleMain;
+import com.mygdx.game.utils.LeaveLobbyButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,14 +59,7 @@ public class CreateLobbyView implements Screen {
                 controller.handleStartGame();
             }
         });
-        TextButton leave = new TextButton("Leave Lobby", skin);
-        leave.getLabel().setFontScale(1.5f);
-        leave.setColor(Color.RED);
-        leave.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent e, float x, float y) {
-                controller.leaveLobby();
-            }
-        });
+        LeaveLobbyButton leave = new LeaveLobbyButton(skin, controller::leaveLobby);
         btns.add(start).padRight(20);
         btns.add(leave);
         root.add(btns).pad(10);

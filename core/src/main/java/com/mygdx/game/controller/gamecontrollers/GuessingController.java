@@ -6,6 +6,7 @@ import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
 import com.mygdx.game.utils.RoundTimer;
+import com.mygdx.game.view.MainMenuView;
 import com.mygdx.game.view.gameviews.GuessingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
@@ -37,6 +38,7 @@ public class GuessingController implements GuessingView.GuessListener {
     }
 
     private void initView() {
+        GuessingView gv = new GuessingView(game, this::leaveLobby);
         Gdx.app.postRunnable(() -> {
             view.displayMaskedWord(logic.getMaskedWord());
             view.setTime(60);
@@ -101,9 +103,19 @@ public class GuessingController implements GuessingView.GuessListener {
 
         Gdx.app.postRunnable(() -> {
             String drawer = logic.getCurrentDrawer();
-            LeaderboardView lbv = new LeaderboardView(game, lobbyCode, drawer);
+            LeaderboardView lbv = new LeaderboardView(game, lobbyCode, drawer,
+                    () -> {
+                firebase.leaveLobby(lobbyCode, game.getPlayerName());
+                Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game)));
+            }
+            );
             new LeaderboardController(game, logic, lobbyCode);
             game.setScreen(lbv);
         });
+    }
+
+    public void leaveLobby(){
+        firebase.leaveLobby(lobbyCode, game.getPlayerName());
+        Gdx.app.postRunnable(() -> game.setScreen(new MainMenuView(game)));
     }
 }
