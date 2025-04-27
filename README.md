@@ -34,6 +34,63 @@ Useful Gradle tasks and flags:
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
 
+# How to Run the Game
+
+### Android
+
+<strong>Step 1</strong> - Allow for the download of .apk files by going to Settings -> Apps -> Special app access -> Install unknown apps, and clicking "Allow" for the web browser of choice (e.g. Google Chrome)
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/989c622a-5706-47b3-a87c-1be37d64942d" width="300">&nbsp;
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b3f04e7c-9130-4a88-a702-fe01610b3874" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/e33fc6e1-528c-4241-9b02-784fb386f38c" width="300">&nbsp;
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f45cbcef-3dbc-465d-8ee4-6af87a9468dc" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/d5579e2f-386b-4e41-a5a0-9f15de1b68e7" width="300">&nbsp;
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f3846e95-ec00-46c5-a44d-7d17b079d962" width="300">&nbsp;
+</p>
+
+<strong>Step 2<strong> - Download .apk file of the game from this repository on the desired android device using the previously chosen web browser
+
+<strong>Step 3<strong> - Open the file and install the application. Once finished the app should appear on the home screen of the device.
+
+
+### PC
+
+<strong>Step 1<strong> - Download Android Studios:
+
+- Check that the PC in question has the minimum requirements for running the program [here](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#1).
+- If it meets the requirements, one can download Android Studios [here](https://developer.android.com/studio#get-android-studio).
+- Open the downloaded file to start the installation.
+
+<strong>Step 2<strong> - Get the Code:
+
+- Download the code from the production branch of this repository 
+- The easiest way to do this is by downloading it as a zip file
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d17911d2-76b1-4768-87cc-f50e3f163a8f" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/2307a4e5-241b-446d-bc8e-bbbb7aa1b3e9" width="300">&nbsp;
+</p>
+
+<strong>Step 3<strong> - Open the Code:
+
+- Unzip the file and open it using Android Studios
+- Click the "run" button as shown in the figure below
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/58bc1213-2bff-497f-a1a3-daaae22f8ae6" width="300">&nbsp;
+</p>
+
+<strong>Disclaimer!<strong> - As this is a multiplayer game only, one cannot play using a single device alone. Repeat the steps either for Android or PC on another device to be able to play.
 
 # How to play the game
 
