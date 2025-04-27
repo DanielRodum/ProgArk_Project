@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.view.CreateLobbyView;
+import com.mygdx.game.view.WaitingView;
 
 public class CreateLobbyController {
     private final doodleMain game;

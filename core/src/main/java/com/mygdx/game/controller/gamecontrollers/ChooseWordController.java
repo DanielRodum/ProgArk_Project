@@ -35,7 +35,7 @@ public class ChooseWordController {
         });
     }
 
-    /** Called when the drawer taps one of the three options. */
+    /** Called when the drawer taps one of the word options. */
     public void selectWord(String word) {
         firebase.saveChosenWord(lobbyCode, word, new FirebaseInterface.LobbyCallback() {
             @Override public void onSuccess(String msg) {

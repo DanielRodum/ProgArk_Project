@@ -3,16 +3,15 @@ package com.mygdx.game.controller.gamecontrollers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
 import com.mygdx.game.utils.RoundTimer;
 import com.mygdx.game.view.gameviews.DrawingView;
-import com.mygdx.game.view.gameviews.LeaderboardView;
+import com.mygdx.game.controller.gamecontrollers.LeaderboardController;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class DrawingController {
@@ -29,16 +28,49 @@ public class DrawingController {
         this.view          = view;
         this.lobbyCode     = lobbyCode;
         this.firebase      = game.getFirebaseService();
-        this.currentDrawer = game.getPlayerName();          // the drawer’s own name
+        this.currentDrawer = game.getPlayerName();
         this.logic         = new GameLogic(firebase, lobbyCode);
 
-        fetchWord();
-        view.setTime(60);
-        subscribeToRemoteStrokes();
+        // 1) Fetch & display the chosen word
+        firebase.getChosenWord(lobbyCode, new FirebaseInterface.WordCallback() {
+            @Override
+            public void onSuccess(String word) {
+                Gdx.app.postRunnable(() -> view.setWord(word));
+            }
+            @Override
+            public void onFailure(Exception e) {
+                Gdx.app.postRunnable(() -> view.setWord("<Error>"));
+            }
+        });
 
-        firebase.subscribeToGuesses(lobbyCode, this::endRound);
+        // 2) Initialize timer UI
+        Gdx.app.postRunnable(() -> view.setTime(60));
 
+        // 3) Listen for remote strokes
+        firebase.subscribeToStrokes(lobbyCode, new FirebaseInterface.StrokeCallback() {
+            @Override
+            public void onStrokeAdded(String id, List<Vector2> pts, String colorHex) {
+                Gdx.app.postRunnable(() ->
+                    view.addRemoteStroke(pts, Color.valueOf(colorHex))
+                );
+            }
+        });
+
+        // 4) When everyone’s guessed or timer expires, end round
+        firebase.subscribeToGuesses(lobbyCode, new FirebaseInterface.GuessesCallback() {
+            @Override public void onAllGuessed() { endRound(); }
+        });
         startRoundTimer(60);
+    }
+
+    /** Called from the view whenever the drawer draws or drags. */
+    public void onLocalStrokeCompleted(String strokeId, List<Vector2> points, Color color) {
+        String hex = String.format("#%02x%02x%02x",
+            (int)(color.r * 255),
+            (int)(color.g * 255),
+            (int)(color.b * 255)
+        );
+        firebase.sendStroke(lobbyCode, strokeId, points, hex);
     }
 
     private void startRoundTimer(int seconds) {
@@ -54,47 +86,28 @@ public class DrawingController {
     }
 
     private void endRound() {
+        // stop the timer if it’s still running
         if (roundTimer != null && roundTimer.isRunning()) {
             roundTimer.stop();
         }
-        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
-        if (game.getPlayerName().equals(currentDrawer)) {
-            // pick next drawer (round-robin)
-            List<String> names = logic.getPlayers().stream()
-                .map(p -> p.getName()).collect(Collectors.toList());
-            int idx = names.indexOf(currentDrawer);
-            String next = names.get((idx + 1) % names.size());
-            firebase.startGame(lobbyCode, next);
-        }
-    }
 
-    private void fetchWord() {
-        firebase.getChosenWord(lobbyCode, new FirebaseInterface.WordCallback() {
-            @Override public void onSuccess(String word) {
-                view.setWord(word);
-            }
-            @Override public void onFailure(Exception e) {
-                view.setWord("<Error>");
-            }
+        // hand off to LeaderboardController, which will show the view
+        Gdx.app.postRunnable(() -> {
+            new LeaderboardController(game, logic, lobbyCode);
         });
-    }
 
-    public void onLocalStrokeCompleted(String strokeId, List<Vector2> points, Color color) {
-        // Convert the color to a hex string:
-        String hex = String.format("#%02x%02x%02x",
-            (int)(color.r * 255),
-            (int)(color.g * 255),
-            (int)(color.b * 255)
-        );
-        firebase.sendStroke(lobbyCode, strokeId, points, hex);
-    }
-
-    private void subscribeToRemoteStrokes() {
-        firebase.subscribeToStrokes(lobbyCode, (strokeId, points, colorHex) ->
-            Gdx.app.postRunnable(() -> {
-                Color c = Color.valueOf(colorHex);
-                view.addRemoteStroke(points, Color.valueOf(colorHex));
-            })
-        );
+        // if I was the drawer, schedule the next drawer pick
+        if (game.getPlayerName().equals(currentDrawer)) {
+            List<String> names = logic.getPlayers().stream()
+                .map(p -> p.getName())
+                .collect(Collectors.toList());
+            int idx  = names.indexOf(currentDrawer);
+            String next = names.get((idx + 1) % names.size());
+            Timer.schedule(new Timer.Task() {
+                @Override public void run() {
+                    firebase.startGame(lobbyCode, next);
+                }
+            }, 5f);
+        }
     }
 }

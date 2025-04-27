@@ -4,12 +4,16 @@ import com.mygdx.game.FirebaseInterface;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Holds the current lobby state: player list, current drawer, and current word.
+ */
 public class GameLogic {
     private final List<Player> players = new ArrayList<>();
     private String currentWord;
+    private String currentDrawer;
 
     public GameLogic(FirebaseInterface firebase, String lobbyCode) {
+        // Listen to lobby state changes
         firebase.setupLobbyListener(lobbyCode, new FirebaseInterface.LobbyStateCallback() {
             @Override
             public void onPlayerJoined(String playerName) {
@@ -23,7 +27,12 @@ public class GameLogic {
 
             @Override
             public void onGameStarted(String drawerName) {
-                // handled elsewhere
+                // track current drawer
+                currentDrawer = drawerName;
+                // update player flags
+                for (Player p : players) {
+                    p.setDrawer(p.getName().equals(drawerName));
+                }
             }
 
             @Override
@@ -35,6 +44,7 @@ public class GameLogic {
             public void onLobbyClosed() {
                 players.clear();
                 currentWord = null;
+                currentDrawer = null;
             }
 
             @Override
@@ -44,22 +54,22 @@ public class GameLogic {
         });
     }
 
-    /** For å hente ut spillere */
+    /** Returns a copy of players and their current scores + drawer status */
     public List<Player> getPlayers() {
         return new ArrayList<>(players);
     }
 
-    /** For å sette currentWord basert på firebase-logikk */
-    public void setCurrentWord(String word) {
-        this.currentWord = word;
+    /** Returns the current drawer name */
+    public String getCurrentDrawer() {
+        return currentDrawer;
     }
 
-    /** For å hente currentWord */
+    /** Returns the current word being drawn */
     public String getCurrentWord() {
         return currentWord;
     }
 
-    /** Returnerer en skult versjon av ordet for gjetterne (ex: "_ _ _ _") */
+    /** Returns a masked version of the current word (e.g. "_ _ _") */
     public String getMaskedWord() {
         if (currentWord == null) return "";
         StringBuilder sb = new StringBuilder();
@@ -70,7 +80,7 @@ public class GameLogic {
         return sb.toString().trim();
     }
 
-    /** Sjekker om ordet gjettet er riktig ord */
+    /** Checks if a guess matches the current word (case-insensitive) */
     public boolean isCorrectGuess(String guess) {
         if (currentWord == null || guess == null) return false;
         return currentWord.equalsIgnoreCase(guess.trim());

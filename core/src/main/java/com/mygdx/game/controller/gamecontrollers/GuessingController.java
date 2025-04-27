@@ -5,70 +5,77 @@ import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
-import com.mygdx.game.utils.RoundTimer;
+import com.mygdx.game.model.Player;
 import com.mygdx.game.view.gameviews.GuessingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
 
-public class GuessingController {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GuessingController implements GuessingView.GuessListener {
     private final doodleMain game;
     private final GameLogic logic;
-    private final GuessingView guessingView;
+    private final GuessingView view;
     private final String lobbyCode;
     private final FirebaseInterface firebase;
-    private RoundTimer timer;
+    private boolean roundEnded = false;
 
     public GuessingController(doodleMain game,
                               GameLogic logic,
-                              GuessingView guessingView,
+                              GuessingView view,
                               String lobbyCode) {
-        this.game = game;
-        this.logic = logic;
-        this.guessingView = guessingView;
-        this.lobbyCode = lobbyCode;
-        this.firebase = game.getFirebaseService();
+        this.game       = game;
+        this.logic      = logic;
+        this.view       = view;
+        this.lobbyCode  = lobbyCode;
+        this.firebase   = game.getFirebaseService();
 
-        // show masked word
-        guessingView.displayMaskedWord(logic.getMaskedWord());
+        initView();
+        subscribeStrokes();
+        subscribeGuesses();
+    }
 
-        firebase.subscribeToStrokes(lobbyCode, (strokeId, points, colorHex) ->
-            Gdx.app.postRunnable(() -> guessingView.addRemoteStroke(points, Color.valueOf(colorHex)))
+    private void initView() {
+        Gdx.app.postRunnable(() -> {
+            view.displayMaskedWord(logic.getMaskedWord());
+            view.setTime(60);
+            // wire up this controller as the GuessListener
+            view.setGuessListener(this);
+        });
+    }
+
+    private void subscribeStrokes() {
+        firebase.subscribeToStrokes(lobbyCode, (id, pts, hex) ->
+            Gdx.app.postRunnable(() ->
+                view.addRemoteStroke(pts, Color.valueOf(hex))
+            )
         );
-
-        // subscribe to guess completions
-        firebase.subscribeToGuesses(lobbyCode, new FirebaseInterface.GuessesCallback() {
-            @Override
-            public void onAllGuessed() {
-                endRound();
-            }
-        });
-
-        // start countdown
-        startTimer(60);
     }
 
-    private void startTimer(int seconds) {
-        timer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
-            @Override public void onTick(int secsLeft) {
-                Gdx.app.postRunnable(() -> guessingView.setTime(secsLeft));
-            }
-            @Override public void onTimeUp() {
-                endRound();
-            }
-        });
-        timer.start();
+    private void subscribeGuesses() {
+        firebase.subscribeToGuesses(lobbyCode, () -> endRound());
     }
 
-    public void onGuessSubmitted(String guess) {
+    @Override
+    public void onGuess(String guess) {
+        if (roundEnded) return;
         if (logic.isCorrectGuess(guess)) {
             firebase.recordGuess(lobbyCode, game.getPlayerName());
-            Gdx.app.postRunnable(() -> guessingView.showCorrectFeedback());
+            firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), 100);
+            Gdx.app.postRunnable(() -> view.showCorrectFeedback());
         } else {
-            Gdx.app.postRunnable(() -> guessingView.showIncorrectFeedback());
+            Gdx.app.postRunnable(() -> view.showIncorrectFeedback());
         }
     }
 
     private void endRound() {
-        if (timer != null && timer.isRunning()) timer.stop();
-        Gdx.app.postRunnable(() -> game.setScreen(new LeaderboardView()));
+        if (roundEnded) return;
+        roundEnded = true;
+        Gdx.app.postRunnable(() -> {
+            String drawer = logic.getCurrentDrawer();
+            LeaderboardView lbv = new LeaderboardView(game, lobbyCode, drawer);
+            new LeaderboardController(game, logic, lobbyCode);
+            game.setScreen(lbv);
+        });
     }
 }

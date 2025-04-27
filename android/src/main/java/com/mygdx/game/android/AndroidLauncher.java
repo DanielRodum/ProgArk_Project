@@ -31,15 +31,19 @@ public class AndroidLauncher extends AndroidApplication implements PlatformServi
         // Create FirebaseManager
         FirebaseInterface firebase = new FirebaseManager();
 
-        // Inject PlatformService (this) into doodleMain
+        // 1) Instantiate core game and immediately initialize LibGDX
+        game = new doodleMain(this);
+        game.setFirebaseService(firebase);
+        initialize(game, config);
+
+        // 2) Then set up Firebase persistence asynchronously
         firebase.initializeDatabaseStructure(() -> {
-            game = new doodleMain(this);
-            game.setFirebaseService(firebase);
-            initialize(game, config);
+            // post-init work if needed
+            Gdx.app.log("AndroidLauncher", "Firebase persistence enabled");
         });
     }
 
-    /** Called from core to launch the in‑app tutorial. */
+    /** Called from core to launch the in-app tutorial. */
     @Override
     public void openTutorialVideo() {
         Intent intent = new Intent(this, TutorialActivity.class);
@@ -55,12 +59,11 @@ public class AndroidLauncher extends AndroidApplication implements PlatformServi
         }
     }
 
+    @Override
     public void setAllowLandscape(boolean allow) {
         if (allow) {
-            // Let the sensor decide (portrait or landscape)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         } else {
-            // Lock back to portrait
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
