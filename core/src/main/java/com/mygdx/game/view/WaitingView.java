@@ -48,6 +48,8 @@ public class WaitingView implements Screen {
         playersTable = new Table();
         root.add(playersTable).pad(10).row();
 
+        controller = new WaitingController(game, this, lobbyCode, isHost);
+
         Table btns = new Table();
         if (isHost) {
             TextButton start = new TextButton("Start Game", skin);
@@ -63,9 +65,6 @@ public class WaitingView implements Screen {
         btns.add(leave);
 
         root.add(btns).pad(10);
-
-        // must instantiate controller after UI is set up
-        controller = new WaitingController(game, this, lobbyCode, isHost);
     }
 
     /** Add a new player and rebuild the table */

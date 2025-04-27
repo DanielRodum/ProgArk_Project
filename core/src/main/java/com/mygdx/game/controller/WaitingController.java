@@ -10,6 +10,8 @@ import com.mygdx.game.view.WaitingView;
 import com.mygdx.game.view.gameviews.ChooseWordView;
 import com.mygdx.game.view.gameviews.GuessingView;
 
+import jdk.tools.jmod.Main;
+
 public class WaitingController {
     private final doodleMain game;
     private final WaitingView view;
@@ -56,7 +58,15 @@ public class WaitingController {
                 String drawer = logic.getCurrentDrawer();
                 if (!game.getPlayerName().equals(drawer)) {
                     Gdx.app.postRunnable(() -> {
-                        GuessingView guessingView = new GuessingView(game);
+                        GuessingView guessingView = new GuessingView(
+                                game,
+                                () -> {
+                                    firebase.leaveLobby(lobbyCode, game.getPlayerName());
+                                    Gdx.app.postRunnable(() ->
+                                            game.setScreen(new MainMenuView(game))
+                                            );
+                                }
+                                );
                         GuessingController gc = new GuessingController(
                             game,
                             logic,
