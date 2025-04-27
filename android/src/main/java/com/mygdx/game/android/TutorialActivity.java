@@ -26,7 +26,7 @@ public class TutorialActivity extends Activity {
         ws.setJavaScriptEnabled(true);
         ws.setMediaPlaybackRequiresUserGesture(false);
         try {
-            webView.loadUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            webView.loadUrl("https://youtu.be/Fj2hThCv_dI");
         } catch (Exception e) {
             Log.e("TutorialActivity", "WebView load failed", e);
         }

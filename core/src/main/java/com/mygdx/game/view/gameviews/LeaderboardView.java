@@ -94,7 +94,9 @@ public class LeaderboardView implements Screen {
         table.add(wait).colspan(2).padTop(30);
     }
 
-    @Override public void render(float delta) {
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(1f, 0.5f, 0.5f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();

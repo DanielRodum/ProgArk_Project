@@ -68,12 +68,12 @@ public class DrawingView implements Screen {
         uiStage.addActor(table);
 
         wordLabel = new Label("Word: loading...", skin);
-        wordLabel.setColor(Color.WHITE);
-        wordLabel.setFontScale(2f);
+        wordLabel.setColor(Color.BLACK);
+        wordLabel.setFontScale(5f);
 
-        timerLabel = new Label("60", skin);
-        timerLabel.setColor(Color.YELLOW);
-        timerLabel.setFontScale(2f);
+        timerLabel = new Label("30", skin);
+        timerLabel.setColor(Color.BLACK);
+        timerLabel.setFontScale(5f);
 
         table.add(wordLabel).expandX().left().padLeft(20);
         table.add(timerLabel).expandX().right().padRight(20);
@@ -94,11 +94,14 @@ public class DrawingView implements Screen {
         table.add(colorButtons).colspan(2).center().padTop(20);
     }
 
-    private void addColorButton(Table table, Color color) {
-        int size = 80;
+    private void addColorButton(Table table, Color color){
+        int size = 100;
+        int borderWidth = 3;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-        pixmap.setColor(color);
+        pixmap.setColor(Color.BLACK);
         pixmap.fill();
+        pixmap.setColor(color);
+        pixmap.fillRectangle(borderWidth, borderWidth, size-2*borderWidth, size-2 * borderWidth);
 
         Texture tex = new Texture(pixmap);
         pixmap.dispose();
