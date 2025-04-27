@@ -43,6 +43,11 @@ public class doodleMain extends Game {
                 }
 
                 @Override
+                public void subscribeToTimer(String lobbyCode, TimerCallback callback) {
+                    // no-op in desktop stub
+                }
+
+                @Override
                 public void saveChosenWord(String lobbyCode, String word, LobbyCallback callback) {
                     // no‐op
                 }

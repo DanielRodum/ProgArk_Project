@@ -58,7 +58,35 @@ public class DrawingController {
         firebase.subscribeToGuesses(lobbyCode, this::endRound);
 
         // start the ticking UI timer
-        startRoundTimer(60);
+        firebase.subscribeToTimer(lobbyCode, (startMs, durationS) -> {
+            long now = System.currentTimeMillis();
+            final int secsLeft = (int)(durationS - (now - startMs) / 1000);  // ← mark final
+
+            if (secsLeft < 0) {
+                Gdx.app.postRunnable(() -> view.setTime(0));
+                // immediately fire time-up if needed
+                Gdx.app.postRunnable(this::endRound);
+                return;
+            }
+
+            // first, show the current remaining:
+            Gdx.app.postRunnable(() -> view.setTime(secsLeft));
+
+            // then schedule ticks every second:
+            Timer.schedule(new Timer.Task() {
+                int remaining = secsLeft;
+                @Override
+                public void run() {
+                    remaining--;
+                    if (remaining >= 0) {
+                        Gdx.app.postRunnable(() -> view.setTime(remaining));
+                    } else {
+                        this.cancel();
+                        Gdx.app.postRunnable(DrawingController.this::endRound);
+                    }
+                }
+            }, 1, 1, secsLeft);
+        });
     }
 
     /** Called from the view whenever the drawer draws or drags. */
@@ -71,21 +99,6 @@ public class DrawingController {
                 (int)(color.b * 255)
         );
         firebase.sendStroke(lobbyCode, strokeId, points, hex);
-    }
-
-    private void startRoundTimer(int seconds) {
-        roundTimer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
-            @Override public void onTick(int secsLeft) {
-                Gdx.app.postRunnable(() -> {
-                    // assume view reference still alive
-                    ((com.mygdx.game.view.gameviews.DrawingView)game.getScreen()).setTime(secsLeft);
-                });
-            }
-            @Override public void onTimeUp() {
-                endRound();
-            }
-        });
-        roundTimer.start();
     }
 
     private void endRound() {

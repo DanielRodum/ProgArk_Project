@@ -191,6 +191,8 @@ public class FirebaseManager implements FirebaseInterface {
         Map<String,Object> upd = new HashMap<>();
         upd.put("word", word);
         upd.put("status", "drawing:" + getCurrentDrawer(lobbyCode));
+        upd.put("roundStart", ServerValue.TIMESTAMP);
+        upd.put("roundDuration", 60);
         lobby.updateChildren(upd)
             .addOnSuccessListener(__ -> cb.onSuccess(lobbyCode))
             .addOnFailureListener(e  -> cb.onFailure(e.getMessage()));
@@ -318,5 +320,22 @@ public class FirebaseManager implements FirebaseInterface {
         StringBuilder sb = new StringBuilder(6);
         for (int i = 0; i < 6; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
         return sb.toString();
+    }
+
+    @Override
+    public void subscribeToTimer(String lobbyCode, TimerCallback cb) {
+        // Listen to the whole lobby node so we get roundStart AND roundDuration together
+        database
+                .getReference("lobbies/" + lobbyCode)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override public void onDataChange(DataSnapshot snap) {
+                        Long start = snap.child("roundStart").getValue(Long.class);
+                        Long dur   = snap.child("roundDuration").getValue(Long.class);
+                        if (start != null && dur != null) {
+                            cb.onTimerUpdated(start, dur);
+                        }
+                    }
+                    @Override public void onCancelled(DatabaseError e) { /* ignore */ }
+                });
     }
 }

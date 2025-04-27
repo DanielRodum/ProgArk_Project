@@ -56,6 +56,11 @@ public interface FirebaseInterface {
         void onFailure(String error);
     }
 
+    interface TimerCallback {
+        void onTimerUpdated(long startTimeMs, long durationS);
+    }
+
+
     void saveChosenWord(String lobbyCode, String word, LobbyCallback callback);
     void getChosenWord(String lobbyCode, WordCallback callback);
     void createLobby(String hostName, LobbyCallback callback);
@@ -66,4 +71,5 @@ public interface FirebaseInterface {
     void setupLobbyListener(String lobbyCode, LobbyStateCallback callback);
     void initializeDatabaseStructure(Runnable onComplete);
     void updatePlayerScore(String lobbyCode, String playerName, int score);
+    void subscribeToTimer(String lobbyCode, TimerCallback callback);
 }

@@ -2,6 +2,7 @@ package com.mygdx.game.controller.gamecontrollers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
@@ -34,7 +35,35 @@ public class GuessingController implements GuessingView.GuessListener {
         initView();
         subscribeStrokes();
         subscribeGuesses();
-        startTimer(60);
+        firebase.subscribeToTimer(lobbyCode, (startMs, durationS) -> {
+            long now = System.currentTimeMillis();
+            final int secsLeft = (int)(durationS - (now - startMs) / 1000);  // ← mark final
+
+            if (secsLeft < 0) {
+                Gdx.app.postRunnable(() -> view.setTime(0));
+                // immediately fire time-up if needed
+                Gdx.app.postRunnable(this::endRound);
+                return;
+            }
+
+            // first, show the current remaining:
+            Gdx.app.postRunnable(() -> view.setTime(secsLeft));
+
+            // then schedule ticks every second:
+            Timer.schedule(new Timer.Task() {
+                int remaining = secsLeft;
+                @Override
+                public void run() {
+                    remaining--;
+                    if (remaining >= 0) {
+                        Gdx.app.postRunnable(() -> view.setTime(remaining));
+                    } else {
+                        this.cancel();
+                        Gdx.app.postRunnable(GuessingController.this::endRound);
+                    }
+                }
+            }, 1, 1, secsLeft);
+        });
     }
 
     private void initView() {
@@ -44,18 +73,6 @@ public class GuessingController implements GuessingView.GuessListener {
             view.setTime(60);
             view.setGuessListener(this);
         });
-    }
-
-    private void startTimer(int seconds) {
-        roundTimer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
-            @Override public void onTick(int secsLeft) {
-                Gdx.app.postRunnable(() -> view.setTime(secsLeft));
-            }
-            @Override public void onTimeUp() {
-                endRound();
-            }
-        });
-        roundTimer.start();
     }
 
     private void subscribeStrokes() {
