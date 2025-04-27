@@ -5,12 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.FirebaseInterface;
 import com.mygdx.game.doodleMain;
 import com.mygdx.game.model.GameLogic;
-import com.mygdx.game.model.Player;
+import com.mygdx.game.utils.RoundTimer;
 import com.mygdx.game.view.gameviews.GuessingView;
 import com.mygdx.game.view.gameviews.LeaderboardView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuessingController implements GuessingView.GuessListener {
     private final doodleMain game;
@@ -18,30 +15,45 @@ public class GuessingController implements GuessingView.GuessListener {
     private final GuessingView view;
     private final String lobbyCode;
     private final FirebaseInterface firebase;
+
+    private RoundTimer roundTimer;
     private boolean roundEnded = false;
+    private boolean hasGuessedCorrectly = false;
 
     public GuessingController(doodleMain game,
                               GameLogic logic,
                               GuessingView view,
                               String lobbyCode) {
-        this.game       = game;
-        this.logic      = logic;
-        this.view       = view;
-        this.lobbyCode  = lobbyCode;
-        this.firebase   = game.getFirebaseService();
+        this.game      = game;
+        this.logic     = logic;
+        this.view      = view;
+        this.lobbyCode = lobbyCode;
+        this.firebase  = game.getFirebaseService();
 
         initView();
         subscribeStrokes();
         subscribeGuesses();
+        startTimer(60);
     }
 
     private void initView() {
         Gdx.app.postRunnable(() -> {
             view.displayMaskedWord(logic.getMaskedWord());
             view.setTime(60);
-            // wire up this controller as the GuessListener
             view.setGuessListener(this);
         });
+    }
+
+    private void startTimer(int seconds) {
+        roundTimer = new RoundTimer(seconds, new RoundTimer.TimerListener() {
+            @Override public void onTick(int secsLeft) {
+                Gdx.app.postRunnable(() -> view.setTime(secsLeft));
+            }
+            @Override public void onTimeUp() {
+                endRound();
+            }
+        });
+        roundTimer.start();
     }
 
     private void subscribeStrokes() {
@@ -53,16 +65,23 @@ public class GuessingController implements GuessingView.GuessListener {
     }
 
     private void subscribeGuesses() {
-        firebase.subscribeToGuesses(lobbyCode, () -> endRound());
+        firebase.subscribeToGuesses(lobbyCode, this::endRound);
     }
 
     @Override
     public void onGuess(String guess) {
-        if (roundEnded) return;
+        if (roundEnded || hasGuessedCorrectly) return;
+
         if (logic.isCorrectGuess(guess)) {
+            hasGuessedCorrectly = true;
+            int timeLeft = roundTimer.getTimeRemaining();
+            int points   = timeLeft * 3;
             firebase.recordGuess(lobbyCode, game.getPlayerName());
-            firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), 100);
-            Gdx.app.postRunnable(() -> view.showCorrectFeedback());
+            firebase.updatePlayerScore(lobbyCode, game.getPlayerName(), points);
+            Gdx.app.postRunnable(() -> {
+                view.showCorrectFeedback();
+                view.disableInput();
+            });
         } else {
             Gdx.app.postRunnable(() -> view.showIncorrectFeedback());
         }
@@ -71,6 +90,11 @@ public class GuessingController implements GuessingView.GuessListener {
     private void endRound() {
         if (roundEnded) return;
         roundEnded = true;
+
+        if (roundTimer != null && roundTimer.isRunning()) {
+            roundTimer.stop();
+        }
+
         Gdx.app.postRunnable(() -> {
             String drawer = logic.getCurrentDrawer();
             LeaderboardView lbv = new LeaderboardView(game, lobbyCode, drawer);
