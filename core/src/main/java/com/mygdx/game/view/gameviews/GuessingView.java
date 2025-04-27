@@ -2,18 +2,13 @@ package com.mygdx.game.view.gameviews;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -22,15 +17,8 @@ import com.mygdx.game.doodleMain;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * View for guessers: shows masked word, timer, drawing canvas, and input.
- */
 public class GuessingView implements Screen {
-
-    /** Listener for when the user submits a guess */
-    public interface GuessListener {
-        void onGuess(String guess);
-    }
+    public interface GuessListener { void onGuess(String guess); }
 
     private final doodleMain game;
     private GuessListener onGuess;
@@ -42,7 +30,6 @@ public class GuessingView implements Screen {
     private TextField guessField;
     private TextButton submitBtn;
     private Label feedbackLabel;
-
     private ShapeRenderer shapeRenderer;
     private final List<Stroke> strokes = new ArrayList<>();
 
@@ -101,9 +88,6 @@ public class GuessingView implements Screen {
             .row();
     }
 
-    /**
-     * Assigns the listener and wires up the submit button.
-     */
     public void setGuessListener(GuessListener listener) {
         this.onGuess = listener;
         submitBtn.addListener(new ClickListener() {
@@ -134,7 +118,12 @@ public class GuessingView implements Screen {
         feedbackLabel.setColor(Color.RED);
     }
 
-    /** Called by controller to render strokes from the drawer in real time */
+    /** Disables the text field & button once you’ve guessed correctly. */
+    public void disableInput() {
+        submitBtn.setDisabled(true);
+        guessField.setDisabled(true);
+    }
+
     public void addRemoteStroke(List<Vector2> pts, Color color) {
         Stroke s = new Stroke(color);
         for (Vector2 p : pts) s.addPoint(p);
@@ -142,19 +131,18 @@ public class GuessingView implements Screen {
     }
 
     @Override public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Stroke s : strokes) s.render(shapeRenderer);
         shapeRenderer.end();
-
         stage.act(delta);
         stage.draw();
     }
 
-    @Override public void resize(int width, int height) {
+
+@Override public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
