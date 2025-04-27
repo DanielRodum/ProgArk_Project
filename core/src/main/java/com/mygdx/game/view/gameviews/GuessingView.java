@@ -80,10 +80,16 @@ public class GuessingView implements Screen {
 
         guessField = new TextField("", skin);
         guessField.setMessageText("Your guess…");
-        //MANGLER Å ØKE FONT HER! TODO
+
+        TextField.TextFieldStyle style = new TextField.TextFieldStyle(guessField.getStyle());
+        style.font.getData().setScale(5f);
+        if (style.background != null) {
+            style.background.setLeftWidth(style.background.getLeftWidth() + 30);
+        }
+        guessField.setStyle(style);
         table.add(guessField)
             .width(Gdx.graphics.getWidth() * 0.7f)
-            .height(Gdx.graphics.getHeight() * 0.03f)
+            .height(Gdx.graphics.getHeight() * 0.05f)
             .padBottom(20f).row();
 
         submitBtn = new TextButton("Submit", skin);

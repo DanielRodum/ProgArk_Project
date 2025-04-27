@@ -8,6 +8,7 @@ import com.mygdx.game.view.TutorialView;
 import com.mygdx.game.view.WaitingView;
 import com.mygdx.game.view.gameviews.ChooseWordView;
 import com.mygdx.game.view.gameviews.DrawingView;
+import com.mygdx.game.view.gameviews.GuessingView;
 
 import java.util.Locale;
 
