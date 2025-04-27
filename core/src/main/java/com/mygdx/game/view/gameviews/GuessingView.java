@@ -50,6 +50,7 @@ public class GuessingView implements Screen {
 
         maskedWordLabel = new Label("", skin);
         maskedWordLabel.setFontScale(1.5f);
+        maskedWordLabel.setColor(Color.BLACK);
         maskedWordLabel.setAlignment(Align.center);
         table.add(maskedWordLabel)
             .width(Gdx.graphics.getWidth() * 0.8f)

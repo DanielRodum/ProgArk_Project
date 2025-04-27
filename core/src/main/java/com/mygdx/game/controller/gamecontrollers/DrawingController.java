@@ -100,6 +100,7 @@ public class DrawingController {
         if (game.getPlayerName().equals(currentDrawer)) {
             List<String> names = logic.getPlayers().stream()
                 .map(p -> p.getName())
+                .sorted()
                 .collect(Collectors.toList());
             int idx  = names.indexOf(currentDrawer);
             String next = names.get((idx + 1) % names.size());
