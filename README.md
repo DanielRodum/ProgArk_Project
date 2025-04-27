@@ -73,13 +73,17 @@ When the game starts the host player will start as the drawer while the other pl
 
 The drawing player first gets to choose a word to draw amongst a list of 6 word. The drawing player will then be taken to the drawing screen. Here they will see a white screen and can pick and switch between a number of colors by pressing on them to more accurately draw their creation. The drawing player uses their finger or mouse to draw depending on wether they are playing on a mobile or computer device.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0451fc23-87b8-406e-aa0b-dfcf09334123" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
+</p>
+
+
 #### Guessing player
 
 The guessing players will see a screen with what the drawer is drawing in real time. They can enter the word they want to guess in the bar at the to of the screen and submit their guess by pressing the submit button. If the guess is incorrect red text will appear that tells them to “Try again” and the player may then guess a new word. If the guess is correct, green text will appear informing the guesser that their guess is “Correct”, the player will then be unable to write anymore guesses.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/0451fc23-87b8-406e-aa0b-dfcf09334123" width="300">&nbsp;
-  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
   <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
 </p>
 
