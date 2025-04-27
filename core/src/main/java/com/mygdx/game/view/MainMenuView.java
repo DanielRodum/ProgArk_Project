@@ -102,6 +102,9 @@ public class MainMenuView implements Screen {
         textFieldStyle.background = skin.newDrawable("white", Color.WHITE); // white input box
         textFieldStyle.cursor = skin.newDrawable("white", Color.BLACK); // visible cursor
         textFieldStyle.selection = skin.newDrawable("white", new Color(0.3f, 0.3f, 1f, 0.4f)); // selection color
+        if (textFieldStyle.background != null){
+            textFieldStyle.background.setLeftWidth(textFieldStyle.background.getLeftWidth() + 30);
+        }
 
         nameField.setStyle(textFieldStyle);
         nameField.getStyle().font.getData().setScale(fontScale);
