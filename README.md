@@ -41,7 +41,11 @@ For example, `core:clean` removes `build` folder only from the `core` project.
 
 When you first open the game you will be presented with the main menu. Here you can choose between creating a new game lobby, joining an existing lobby or seeing a tutorial video explaining how the game is played. You can navigate by touching the screen to press the buttons.
 
-![main menu.png](attachment:4e5957a4-45d9-47f2-ac1d-8d0e0899b14f:main_menu.png)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/bc74de66-3f0c-4ade-a7a2-2beda0df0de8" width="300">
+</p>
 
 ### Tutorial
 
@@ -54,8 +58,8 @@ To create a new lobby, press the create lobby button and enter the name you want
 If you want of join an existing lobby and have already received a lobby code to a currently active lobby you can instead press the join lobby button. Here you get to enter a username and the lobby code to join the same lobby as your friends. You can se the other people in the that are joining the lobby displayed while you wait for the host to start the game.
 
 <p align="center">
-  <img src="(https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa)" width="300">
-  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">
+  <img src="https://github.com/user-attachments/assets/efb70623-7cf8-4766-b258-fd8e9a7785aa" width="300">&nbsp;
+  <img src="https://github.com/user-attachments/assets/80816253-71f9-48a9-ae4b-97d0bd42b7f2" width="300">&nbsp;
   <img src="https://github.com/user-attachments/assets/bc74de66-3f0c-4ade-a7a2-2beda0df0de8" width="300">
 </p>
 
